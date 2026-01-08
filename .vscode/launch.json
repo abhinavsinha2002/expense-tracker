@@ -18,7 +18,8 @@
             "mainClass": "com.abhinav.expense_tracker.ExpenseTrackerApplication",
             "projectName": "expense-tracker",
             "env":{
-                "MAIL_USERNAME":"abhinavsinha2002@gmail.com"
+                "MAIL_USERNAME":"abhinavsinha2002@gmail.com",
+                "MAIL_PASSWORD":
             }
         }
     ]
