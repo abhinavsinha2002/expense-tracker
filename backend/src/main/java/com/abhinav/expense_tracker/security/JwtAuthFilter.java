@@ -7,10 +7,13 @@ import com.abhinav.expense_tracker.service.CustomUserDetailsService;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Component;
+
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+@Component
 public class JwtAuthFilter extends OncePerRequestFilter {
     @Autowired private JwtUtil jwtUtil;
     @Autowired private CustomUserDetailsService userDetailsService;
@@ -21,6 +24,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         final String authHeader = req.getHeader("Authorization");
         String username = null;
         String token = null;
+        if(authHeader == null || !authHeader.startsWith("Bearer")){
+            chain.doFilter(req,res);
+            return;
+        }
         if(authHeader!=null && authHeader.startsWith("Bearer ")){
             token=authHeader.substring(7);
             try{

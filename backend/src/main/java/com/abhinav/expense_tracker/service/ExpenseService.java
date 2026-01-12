@@ -10,6 +10,8 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.abhinav.expense_tracker.dto.ExpenseDto;
+import com.abhinav.expense_tracker.dto.ExpenseSplitDto;
 import com.abhinav.expense_tracker.entity.Category;
 import com.abhinav.expense_tracker.entity.Expense;
 import com.abhinav.expense_tracker.entity.ExpenseGroup;
@@ -54,7 +56,7 @@ public class ExpenseService {
                 ExpenseSplit s=new ExpenseSplit();
                 s.setMemberIdentifier(sdto.getMember());
                 s.setAmount(sdto.getAmount());
-                s.setExpenses(e);
+                s.setExpense(e);
                 return s;
             }).collect(Collectors.toList());
             e.getSplits().addAll(splits);
@@ -89,9 +91,9 @@ public class ExpenseService {
     }
 
     public void deleteExpense(Long id,String username){
-        Expense e=expenseRepository.findById(id).orElseThrow(()->new IllegalArgumentException("Not found"))
+        Expense e=expenseRepository.findById(id).orElseThrow(()->new IllegalArgumentException("Not found"));
         if(!e.getOwner().getUsername().equals(username)){
-            throw new IllegalAccessException("Only owner can delete");
+            throw new IllegalArgumentException("Only owner can delete");
         }
         expenseRepository.delete(e);
     }
