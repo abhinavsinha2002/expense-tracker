@@ -21,9 +21,10 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
         http.csrf().disable()
             .authorizeHttpRequests(auth->auth
-                .requestMatchers("/auth/**","/health","/error","/v3/api-docs/**","/swagger-ui/**","/ws/**").permitAll()
+                .requestMatchers("/auth/**","/health","/h2-console/**","/error","/v3/api-docs/**","/swagger-ui/**","/ws/**").permitAll()
                 .anyRequest().authenticated()
             );
+        http.headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()));
         http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }

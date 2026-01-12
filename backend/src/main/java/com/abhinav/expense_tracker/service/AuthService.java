@@ -3,6 +3,7 @@ package com.abhinav.expense_tracker.service;
 import java.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 
 import com.abhinav.expense_tracker.entity.PasswordResetToken;
 import com.abhinav.expense_tracker.entity.User;
@@ -12,6 +13,7 @@ import com.abhinav.expense_tracker.repository.UserRepository;
 import com.abhinav.expense_tracker.repository.VerificationTokenRepository;
 import com.abhinav.expense_tracker.security.JwtUtil;
 
+@Service
 public class AuthService {
     @Autowired private UserRepository userRepository;
     @Autowired private PasswordEncoder passwordEncoder;
