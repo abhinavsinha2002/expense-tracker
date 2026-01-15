@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.abhinav.expense_tracker.dto.ExpenseDto;
 import com.abhinav.expense_tracker.dto.ExpenseSplitDto;
@@ -24,6 +25,7 @@ import com.abhinav.expense_tracker.repository.UserRepository;
 
 import jakarta.transaction.Transactional;
 
+@Service
 public class ExpenseService {
     @Autowired private ExpenseRepository expenseRepository;
     @Autowired private UserRepository userRepository;
@@ -113,5 +115,11 @@ public class ExpenseService {
         res.put("total",total);
         res.put("byCategory",byCategory);
         return res;
+    }
+
+    public List<Expense> getAllExpenses(String username){
+        User u = userRepository.findByUsername(username).orElseThrow(()->new IllegalArgumentException("User not found"));
+        Long id = u.getId();
+        return expenseRepository.findByOwnerId(id);
     }
 }

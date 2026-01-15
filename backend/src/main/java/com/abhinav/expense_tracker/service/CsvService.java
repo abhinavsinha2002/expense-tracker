@@ -8,6 +8,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.abhinav.expense_tracker.entity.Category;
@@ -18,6 +19,7 @@ import com.abhinav.expense_tracker.repository.CategoryRepository;
 import com.abhinav.expense_tracker.repository.ExpenseRepository;
 import com.abhinav.expense_tracker.repository.UserRepository;
 
+@Service
 public class CsvService {
     @Autowired private ExpenseRepository expenseRepository;
     @Autowired private CategoryRepository categoryRepository;

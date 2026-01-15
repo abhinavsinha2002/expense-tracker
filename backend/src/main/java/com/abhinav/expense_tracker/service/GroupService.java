@@ -3,6 +3,7 @@ package com.abhinav.expense_tracker.service;
 import java.util.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.abhinav.expense_tracker.dto.SettleUpTransactionDto;
 import com.abhinav.expense_tracker.entity.Expense;
@@ -15,6 +16,7 @@ import com.abhinav.expense_tracker.repository.UserRepository;
 
 import jakarta.transaction.Transactional;
 
+@Service
 public class GroupService {
     @Autowired private GroupRepository groupRepository;
     @Autowired private UserRepository userRepository;
@@ -105,6 +107,6 @@ public class GroupService {
         if(u.isEmpty()){
             return List.of();
         }
-        return groupRepository.findAll().stream().filter(g->g.getMembers().contains(u.get())).toList();
+        
     }
 }

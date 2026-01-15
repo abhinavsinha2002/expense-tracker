@@ -55,4 +55,18 @@ public class AuthController {
         String token = jwtUtil.generateToken(r.getUsername());
         return ResponseEntity.ok(new AuthResponse(token));
     }
+
+    @PostMapping("/reset/request")
+    public ResponseEntity<String> requestReset(@RequestParam String email,HttpServletRequest req){
+        String appUrl = "http://localhost:4200";
+        authService.requestPasswordReset(email, appUrl);
+        return ResponseEntity.ok("Reset link sent to email");
+    }
+
+    @PostMapping("/reset/confirm")
+    public ResponseEntity<String> resetConfirm(@RequestParam String token,@RequestParam String newPassword){
+        authService.resetPassword(token, newPassword);
+        return ResponseEntity.ok("Password changed");
+    }
+    
 }
