@@ -12,8 +12,6 @@ import com.abhinav.expense_tracker.service.CurrencyService;
 
 @RestController
 @RequestMapping("/api/currency")
-@CrossOrigin(origins="http://localhost:4200")
-
 public class CurrencyController {
     @Autowired private CurrencyService currencyService;
     

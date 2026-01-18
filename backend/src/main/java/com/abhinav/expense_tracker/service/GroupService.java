@@ -107,6 +107,6 @@ public class GroupService {
         if(u.isEmpty()){
             return List.of();
         }
-        
+        return groupRepository.findAll().stream().filter(g->g.getMembers().contains(u.get())).toList();
     }
 }

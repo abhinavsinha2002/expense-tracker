@@ -117,9 +117,7 @@ public class ExpenseService {
         return res;
     }
 
-    public List<Expense> getAllExpenses(String username){
-        User u = userRepository.findByUsername(username).orElseThrow(()->new IllegalArgumentException("User not found"));
-        Long id = u.getId();
-        return expenseRepository.findByOwnerId(id);
+    public List<Expense> getAllExpenses(){
+        return expenseRepository.findAll();
     }
 }

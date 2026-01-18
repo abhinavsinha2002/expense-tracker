@@ -23,7 +23,15 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth->auth
                 .requestMatchers("/auth/**","/health","/h2-console/**","/error","/v3/api-docs/**","/swagger-ui/**","/ws/**").permitAll()
                 .anyRequest().authenticated()
-            );
+            )
+            .cors(cors->cors.configurationSource(request->{
+                var corsConfiguration = new org.springframework.web.cors.CorsConfiguration();
+                corsConfiguration.setAllowedOrigins(java.util.List.of("http://localhost:4200", "https://your-production-frontend.com"));
+                corsConfiguration.setAllowedMethods(java.util.List.of("GET","POST","PUT","DELETE","OPTIONS"));
+                corsConfiguration.setAllowedHeaders(java.util.List.of("*"));
+                corsConfiguration.setAllowCredentials(true);
+                return corsConfiguration;
+            }));
         http.headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()));
         http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();

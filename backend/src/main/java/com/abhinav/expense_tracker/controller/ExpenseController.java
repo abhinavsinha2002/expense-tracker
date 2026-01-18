@@ -2,6 +2,7 @@ package com.abhinav.expense_tracker.controller;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,24 +18,28 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.abhinav.expense_tracker.dto.ExpenseDto;
+import com.abhinav.expense_tracker.dto.ExpenseResponseDto;
 import com.abhinav.expense_tracker.entity.Expense;
 import com.abhinav.expense_tracker.service.ExpenseService;
+import com.abhinav.expense_tracker.util.DtoMapper;
 
 @RestController
 @RequestMapping("/api/expenses")
-@CrossOrigin(origins = "http://localhost:4200")
 public class ExpenseController {
     @Autowired private ExpenseService expenseService;
     
     @PostMapping
     public ResponseEntity<?> create(@RequestBody ExpenseDto dto,Authentication auth){
         Expense e = expenseService.createExpenseFromDto(dto, auth.getName());
-        return ResponseEntity.status(HttpStatus.CREATED).body(e);
+        ExpenseResponseDto responseDto = DtoMapper.toExpenseDto(e);
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
     }
 
     @GetMapping
-    public ResponseEntity<List<Expense>> myExpenses(Authentication auth){
-        return ResponseEntity.ok(expenseService.getExpensesForUser(auth.getName()));
+    public ResponseEntity<List<ExpenseResponseDto>> myExpenses(Authentication auth){
+        List<Expense> expenses = expenseService.getExpensesForUser(auth.getName());
+        List<ExpenseResponseDto> dtos = expenses.stream().map(DtoMapper::toExpenseDto).collect(Collectors.toList());
+        return ResponseEntity.ok(dtos);
     }
 
     @DeleteMapping("/{id}")
@@ -48,8 +53,10 @@ public class ExpenseController {
         return ResponseEntity.ok(expenseService.yearlySummary(year, auth.getName()));
     }
 
-    @GetMapping("/all")
-    public ResponseEntity<List<Expense>> all(Authentication auth){
-        return ResponseEntity.ok(expenseService.getAllExpenses(auth.getName()));
-    }
+    //@GetMapping("/all")
+    //public ResponseEntity<List<Expense>> all(Authentication auth){
+        //List<Expense> expenses = expenseService.getExpensesForUser(auth.getName());
+        //List<ExpenseResponseDto> dtos = expenses.stream().map(DtoMapper::toExpenseDto).collect(Collectors.toList());
+        //return ResponseEntity.ok(expenseService.getAllExpenses());
+    //}
 }

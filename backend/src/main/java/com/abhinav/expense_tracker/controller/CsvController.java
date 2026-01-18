@@ -20,7 +20,6 @@ import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/api/csv")
-@CrossOrigin(origins = "http://localhost:4200")
 public class CsvController {
     @Autowired private CsvService csvService;
     @Autowired private UserRepository userRepository;
