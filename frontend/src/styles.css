@@ -1,1 +1,8 @@
 /* You can add global styles to this file, and also import other style files */
+@import "~@angular/material/prebuilt-themes/indigo-pink.css";
+body.light-theme { background:#fafafa; color:#000; }
+body.dark-theme { background:#121212; color:#fff; }
+.mat-toolbar { position: sticky; top: 0; z-index: 10; }
+.container { padding: 16px; }
+.summary-card { text-align:center; border-radius:12px; padding:16px; }
+.chart-container { max-width:800px; margin:24px auto; }
