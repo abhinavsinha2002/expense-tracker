@@ -1,0 +1,47 @@
+<div class="register-container">
+  <div class="register-card fade-in-up">
+    
+    <div class="card-header">
+      <div class="logo-icon">
+        <mat-icon>person_add</mat-icon>
+      </div>
+      <h2>Create Account</h2>
+      <p>Join us to start tracking your finances</p>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="register()">
+      
+      <mat-form-field appearance="outline" class="custom-field">
+        <mat-label>Username</mat-label>
+        <mat-icon matPrefix>person</mat-icon>
+        <input matInput placeholder="Choose a username" formControlName="username">
+        <mat-error *ngIf="form.get('username')?.hasError('required')">Username is required</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="custom-field">
+        <mat-label>Email Address</mat-label>
+        <mat-icon matPrefix>email</mat-icon>
+        <input matInput placeholder="name@example.com" formControlName="email">
+        <mat-error *ngIf="form.get('email')?.hasError('email')">Please enter a valid email</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="custom-field">
+        <mat-label>Password</mat-label>
+        <mat-icon matPrefix>lock</mat-icon>
+        <input matInput type="password" placeholder="Min 6 characters" formControlName="password">
+        <mat-error *ngIf="form.get('password')?.hasError('minlength')">Must be at least 6 characters</mat-error>
+      </mat-form-field>
+
+      <button mat-flat-button color="primary" class="register-btn" [disabled]="form.invalid">
+        CREATE ACCOUNT
+      </button>
+
+    </form>
+
+    <div class="card-footer">
+      <div class="divider"></div>
+      <p>Already have an account? <a routerLink="/login">Log In</a></p>
+    </div>
+
+  </div>
+</div>

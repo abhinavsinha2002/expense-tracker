@@ -89,7 +89,7 @@ public class ExpenseService {
 
     public List<Expense> getExpensesForUser(String username){
         User u=userRepository.findByUsername(username).orElseThrow(()->new IllegalArgumentException("User not found"));
-        return expenseRepository.findByOwnerId(u.getId());
+        return expenseRepository.findByUserInvolvement(u.getUsername());
     }
 
     public void deleteExpense(Long id,String username){
@@ -103,13 +103,23 @@ public class ExpenseService {
     public Map<String,Object> yearlySummary(int year,String username){
         LocalDate start=LocalDate.of(year,1,1);
         LocalDate end=LocalDate.of(year,12,31);
-        List<Expense> all = expenseRepository.findByDateBetween(start,end).stream()
-                            .filter(e->e.getOwner()!=null && e.getOwner().getUsername().equals(username)).collect(Collectors.toList());
-        BigDecimal total = all.stream().map(Expense::getAmount).reduce(BigDecimal.ZERO,BigDecimal::add);
+        List<Expense> all = expenseRepository.findByUserInvolvementAndDateBetween(start, end,username);
+        BigDecimal total = BigDecimal.ZERO; 
         Map<String,BigDecimal> byCategory=new HashMap<>();
         for(Expense e:all){
-            String cat=e.getCategory()!=null ? e.getCategory().getName():"Uncategorized";
-            byCategory.put(cat,byCategory.getOrDefault(cat, BigDecimal.ZERO).add(e.getAmount()));
+            BigDecimal myShare = BigDecimal.ZERO;
+            if(e.getSplits()!=null){
+                for(ExpenseSplit s:e.getSplits()){
+                    if(s.getMemberIdentifier().equals(username)){
+                        myShare=myShare.add(s.getAmount());
+                    }
+                }
+            }
+            if(myShare.compareTo(BigDecimal.ZERO)>0){
+                total = total.add(myShare);
+                String cat=e.getCategory()!=null ? e.getCategory().getName():"Uncategorized";
+                byCategory.put(cat,byCategory.getOrDefault(cat, BigDecimal.ZERO).add(e.getAmount()));
+            }     
         }
         Map<String,Object> res=new HashMap<>();
         res.put("total",total);

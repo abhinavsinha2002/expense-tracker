@@ -1,0 +1,60 @@
+<div class="login-container">
+  <div class="login-card fade-in-up">
+    
+    <div class="card-header">
+      <div class="logo-icon">
+        <mat-icon>{{ isLoginView ? 'lock' : 'mail_lock' }}</mat-icon>
+      </div>
+      <h2>{{ isLoginView ? 'Welcome Back' : 'Reset Password' }}</h2>
+      <p>{{ isLoginView ? 'Enter your credentials to access your account' : 'Enter your email to receive a reset link' }}</p>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="login()" *ngIf="isLoginView; else resetTemplate">
+      
+      <mat-form-field appearance="outline" class="custom-field">
+        <mat-label>Username</mat-label>
+        <mat-icon matPrefix>person</mat-icon>
+        <input matInput placeholder="Ex. Abhinav" formControlName="username">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="custom-field">
+        <mat-label>Password</mat-label>
+        <mat-icon matPrefix>lock_open</mat-icon>
+        <input matInput type="password" placeholder="••••••••" formControlName="password">
+      </mat-form-field>
+
+      <button mat-flat-button color="primary" class="login-btn" [disabled]="form.invalid">
+        LOG IN
+      </button>
+
+    </form>
+
+    <div class="card-footer">
+      <a (click)="toggleView()">Forgot Password?</a>
+      <div class="divider"></div>
+      <p>Don't have an account? <a routerLink="/register">Register</a></p>
+    </div>
+
+    <ng-template #resetTemplate>
+      <form [formGroup]="resetForm" (ngSubmit)="requestReset()">
+        
+        <mat-form-field appearance="outline" class="custom-field">
+          <mat-label>Email Address</mat-label>
+          <mat-icon matPrefix>email</mat-icon>
+          <input matInput placeholder="name@example.com" formControlName="email">
+        </mat-form-field>
+
+        <button mat-flat-button color="primary" class="login-btn" [disabled]="resetForm.invalid">
+          SEND RESET LINK
+        </button>
+
+        <div class="card-footer">
+          <a (click)="toggleView()">Back to Login</a>
+        </div>
+      </form>
+    </ng-template>
+
+
+
+  </div>
+</div>

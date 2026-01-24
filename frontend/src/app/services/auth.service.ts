@@ -11,7 +11,19 @@ interface AuthResponse{
 @Injectable({ providedIn: 'root' })
 export class AuthService{
     private base = `${environment.apiBase}/auth`;
-    constructor(private http:HttpClient){}
+    currentUser:any=null;
+    constructor(private http:HttpClient){
+        const storedToken = localStorage.getItem('token');
+        const storedName = localStorage.getItem('username');
+
+        if (storedToken && storedName) {
+            // Re-create the user object so the UI stays logged in
+            this.currentUser = { 
+                name: storedName, 
+                role: 'User' // You can default this or save role in localStorage too
+            };
+        }
+    }
     register(user:User){
         return this.http.post(`${this.base}/register`,user,{
             responseType: 'text'
@@ -24,6 +36,13 @@ export class AuthService{
                     if(res.accessToken){
                         localStorage.setItem('token',res.accessToken);
                         localStorage.setItem('username',username);
+
+                        // --- FIX 2: SET USER IMMEDIATELY ON LOGIN ---
+                        // This updates the variable so the Sidebar changes instantly
+                        this.currentUser = { 
+                            name: username, 
+                            role: 'User'
+                        }
                     }
                 })
             );
@@ -32,6 +51,7 @@ export class AuthService{
     logout(){
         localStorage.removeItem('token');
         localStorage.removeItem('username');
+        this.currentUser = null;
     }
 
     getToken():string | null{

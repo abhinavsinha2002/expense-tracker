@@ -1,8 +1,22 @@
 /* You can add global styles to this file, and also import other style files */
-@import "~@angular/material/prebuilt-themes/indigo-pink.css";
+@import '@angular/material/prebuilt-themes/indigo-pink.css';
 body.light-theme { background:#fafafa; color:#000; }
 body.dark-theme { background:#121212; color:#fff; }
 .mat-toolbar { position: sticky; top: 0; z-index: 10; }
 .container { padding: 16px; }
 .summary-card { text-align:center; border-radius:12px; padding:16px; }
 .chart-container { max-width:800px; margin:24px auto; }
+
+/* =========================================================
+    6. SNACKBAR STYLES (Add this to styles.css globally!)
+    ========================================================= */
+/* Since these are popped up by the browser, they might not pick up styles here. 
+   Add these to your src/styles.css if they don't appear colored. */
+.error-snackbar {
+  background: #ef4444 !important;
+  color: white !important;
+}
+.success-snackbar {
+  background: #22c55e !important;
+  color: white !important;
+}

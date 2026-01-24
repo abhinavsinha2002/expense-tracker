@@ -1,0 +1,116 @@
+/* =========================================================
+    1. CONTAINER (Matches Content Area)
+    ========================================================= */
+.login-container {
+  /* Fix: Use min-height instead of fixed height so it fits inside the router-outlet 
+     without pushing the header off-screen. */
+  min-height: 75vh; 
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+  /* We don't need the background color here anymore because 
+     the Dashboard layout already provides the dark background. */
+}
+
+/* =========================================================
+    2. GLASS LOGIN CARD
+    ========================================================= */
+.login-card {
+  width: 100%;
+  max-width: 400px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 24px;
+  padding: 40px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Accent Line */
+.login-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 6px;
+  background: linear-gradient(90deg, #38bdf8 0%, #3b82f6 100%);
+}
+
+/* =========================================================
+    3. HEADER & ICONS
+    ========================================================= */
+.card-header { margin-bottom: 30px; }
+
+.logo-icon {
+  width: 60px;
+  height: 60px;
+  background: #f1f5f9;
+  border-radius: 50%;
+  margin: 0 auto 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #3b82f6;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+.logo-icon mat-icon { font-size: 30px; width: 30px; height: 30px; }
+
+h2 {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 700;
+  color: #1e293b;
+  font-size: 1.6rem;
+}
+
+p {
+  margin-top: 8px;
+  color: #64748b;
+  font-size: 0.9rem;
+}
+
+/* =========================================================
+    4. FORM & BUTTONS
+    ========================================================= */
+form { display: flex; flex-direction: column; gap: 15px; }
+
+.custom-field { width: 100%; text-align: left; }
+::ng-deep .mat-mdc-form-field-subscript-wrapper { display: none; } 
+
+.login-btn {
+  height: 48px;
+  font-size: 0.95rem;
+  letter-spacing: 1px;
+  border-radius: 10px;
+  background: linear-gradient(90deg, #38bdf8 0%, #3b82f6 100%) !important;
+  color: white !important;
+  margin-top: 10px;
+  transition: transform 0.2s;
+}
+
+.login-btn:hover:not([disabled]) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+}
+
+/* =========================================================
+    5. FOOTER & ANIMATIONS
+    ========================================================= */
+.card-footer { margin-top: 25px; font-size: 0.85rem; color: #64748b; }
+
+a { color: #3b82f6; text-decoration: none; font-weight: 600; cursor: pointer; }
+a:hover { color: #2563eb; text-decoration: underline; }
+
+.divider { height: 1px; background: #e2e8f0; margin: 20px 0; }
+
+.fade-in-up { animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(40px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
