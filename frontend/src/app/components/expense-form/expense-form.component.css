@@ -1,0 +1,121 @@
+/* =========================================================
+   1. CONTAINER
+   ========================================================= */
+.modal-container {
+  display: flex;
+  flex-direction: column;
+  max-height: 90vh; /* Prevent it from being taller than screen */
+}
+
+/* =========================================================
+   2. HEADER
+   ========================================================= */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid #e2e8f0;
+  background-color: #f8fafc;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.25rem;
+  color: #1e293b;
+  font-weight: 600;
+}
+
+/* =========================================================
+   3. CONTENT (FORM)
+   ========================================================= */
+.modal-content {
+  padding: 24px !important; /* Override Material padding */
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow-y: auto;
+}
+
+.full-width {
+  width: 100%;
+}
+
+/* Icon colors inside inputs */
+mat-icon {
+  color: #64748b;
+  margin-right: 8px;
+}
+
+/* =========================================================
+   4. ACTIONS (BUTTONS)
+   ========================================================= */
+.modal-actions {
+  padding: 16px 24px !important;
+  border-top: 1px solid #e2e8f0;
+  background-color: #f8fafc;
+  gap: 10px;
+}
+
+.save-btn {
+  background: linear-gradient(90deg, #38bdf8 0%, #3b82f6 100%) !important;
+  color: white !important;
+}
+
+button {
+  min-width: 100px;
+}
+
+/* ... existing header/modal styles ... */
+
+.row-inputs {
+  display: flex;
+  gap: 16px;
+}
+
+/* SPLITS SECTION */
+.splits-section {
+  margin-top: 10px;
+  padding-top: 20px;
+  border-top: 1px dashed #e2e8f0;
+}
+
+.splits-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.splits-header h3 {
+  margin: 0;
+  font-size: 1rem;
+  color: #475569;
+  font-weight: 500;
+}
+
+.split-row {
+  display: flex;
+  gap: 12px;
+  align-items: center; /* Aligns inputs with delete button */
+  margin-bottom: 8px;
+}
+
+.empty-hint {
+  text-align: center;
+  color: #94a3b8;
+  font-size: 0.85rem;
+  margin-top: 10px;
+  font-style: italic;
+}
+
+/* ANIMATION */
+.fade-in {
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to   { opacity: 1; transform: translateY(0); }
+}

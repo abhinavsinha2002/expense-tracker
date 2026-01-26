@@ -1,0 +1,65 @@
+<div class="dashboard-container fade-in-up">
+  
+  <div class="page-header">
+    <div class="header-title">
+      <h1>Currency Converter</h1>
+      <p>Check live exchange rates instantly</p>
+    </div>
+  </div>
+
+  <div class="converter-wrapper">
+    <mat-card class="content-card">
+      
+      <div class="card-header">
+        <div class="icon-circle blue">
+          <mat-icon>currency_exchange</mat-icon>
+        </div>
+        <h3>Exchange Rate Calculator</h3>
+      </div>
+
+      <div class="form-container">
+        
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Amount</mat-label>
+          <input matInput type="number" [(ngModel)]="amount" min="1">
+          <span matPrefix>$&nbsp;</span>
+        </mat-form-field>
+
+        <div class="currency-row">
+          
+          <mat-form-field appearance="outline" class="currency-input">
+            <mat-label>From</mat-label>
+            <input matInput [(ngModel)]="fromCurrency" placeholder="USD" style="text-transform: uppercase;">
+          </mat-form-field>
+
+          <button mat-icon-button class="swap-btn" (click)="swapCurrencies()" matTooltip="Swap Currencies">
+            <mat-icon>compare_arrows</mat-icon>
+          </button>
+
+          <mat-form-field appearance="outline" class="currency-input">
+            <mat-label>To</mat-label>
+            <input matInput [(ngModel)]="toCurrency" placeholder="INR" style="text-transform: uppercase;">
+          </mat-form-field>
+
+        </div>
+
+        <button mat-flat-button color="primary" class="convert-btn" (click)="convert()" [disabled]="isConverting || amount <= 0">
+          <mat-icon>calculate</mat-icon> Convert Now
+        </button>
+
+      </div>
+
+      <div class="result-box fade-in" *ngIf="result !== null">
+        <p class="conversion-text">
+          {{ amount | number:'1.0-2' }} {{ fromCurrency | uppercase }} =
+        </p>
+        <h2 class="conversion-value">
+          {{ result | currency: (toCurrency | uppercase) }}
+        </h2>
+        <p class="rate-info">1 {{ fromCurrency | uppercase }} = {{ (result / amount) | number:'1.2-4' }} {{ toCurrency | uppercase }}</p>
+      </div>
+
+    </mat-card>
+  </div>
+
+</div>

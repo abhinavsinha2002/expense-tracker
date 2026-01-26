@@ -1,0 +1,71 @@
+<div class="dashboard-container fade-in-up">
+  
+  <div class="page-header">
+    <div class="header-title">
+      <h1>Group Chat</h1>
+      <p>Real-time updates via WebSocket</p>
+    </div>
+  </div>
+
+  <mat-card class="chat-card">
+    
+    <div class="chat-header">
+      <div class="group-info">
+        <div class="icon-circle blue">
+          <mat-icon>forum</mat-icon>
+        </div>
+        <div>
+          <h3>Expense Group #{{currentGroupId}}</h3>
+          <span class="online-status">● Live Connection</span>
+        </div>
+      </div>
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <div class="chat-body" #scrollContainer>
+      
+      <div class="empty-state" *ngIf="messages.length === 0">
+        <p>No messages yet. Say hello!</p>
+      </div>
+
+      <div *ngFor="let m of messages" 
+           class="message-wrapper" 
+           [ngClass]="{'sent': m.sender === currentUser, 'received': m.sender !== currentUser}">
+        
+        <div class="avatar-circle" *ngIf="m.sender !== currentUser">
+          {{ m.sender.charAt(0).toUpperCase() }}
+        </div>
+
+        <div class="message-content">
+          <div class="bubble">
+            {{ m.message }}
+          </div>
+          <span class="timestamp">
+            {{ m.sender }} <span *ngIf="m.timestamp">• {{ m.timestamp }}</span>
+          </span>
+        </div>
+
+      </div>
+
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <div class="chat-footer">
+      <mat-form-field appearance="outline" class="input-field" subscriptSizing="dynamic">
+        <input matInput 
+               placeholder="Type a message..." 
+               [(ngModel)]="inputMessage" 
+               (keyup.enter)="sendMessage()">
+        <mat-icon matPrefix>sentiment_satisfied_alt</mat-icon>
+      </mat-form-field>
+
+      <button mat-fab color="primary" class="send-btn" (click)="sendMessage()" [disabled]="!inputMessage.trim()">
+        <mat-icon>send</mat-icon>
+      </button>
+    </div>
+
+  </mat-card>
+
+</div>

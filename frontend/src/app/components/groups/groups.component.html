@@ -1,0 +1,99 @@
+<div class="dashboard-container fade-in-up">
+  
+  <div class="page-header">
+    <div class="header-title">
+      <h1>Expense Groups</h1>
+      <p>Create groups and calculate who owes whom</p>
+    </div>
+  </div>
+
+  <div class="groups-grid">
+    
+    <mat-card class="content-card">
+      <div class="card-header">
+        <div class="icon-circle blue">
+          <mat-icon>group_add</mat-icon>
+        </div>
+        <h3>Create New Group</h3>
+      </div>
+      
+      <p class="card-desc">Start a new group for a trip or event.</p>
+
+      <form [formGroup]="form" (ngSubmit)="create()">
+        
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Group Name</mat-label>
+          <mat-icon matPrefix>label</mat-icon>
+          <input matInput placeholder="e.g. Goa Trip 2026" formControlName="name">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Description (Optional)</mat-label>
+          <mat-icon matPrefix>description</mat-icon>
+          <input matInput placeholder="Brief details about the group" formControlName="description">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Members</mat-label>
+          <mat-icon matPrefix>people</mat-icon>
+          <textarea matInput placeholder="Alice, Bob, Charlie (comma separated)" formControlName="members" rows="3"></textarea>
+          <mat-hint>Separate names with commas</mat-hint>
+        </mat-form-field>
+
+        <button mat-flat-button color="primary" class="action-btn" [disabled]="form.invalid || isCreating">
+          <mat-icon>check</mat-icon> Create Group
+        </button>
+      </form>
+    </mat-card>
+
+    <mat-card class="content-card">
+      <div class="card-header">
+        <div class="icon-circle green">
+          <mat-icon>currency_exchange</mat-icon>
+        </div>
+        <h3>Settle Debts</h3>
+      </div>
+
+      <p class="card-desc">Enter a Group ID to see who needs to pay whom.</p>
+
+      <div class="settle-form">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Group ID</mat-label>
+          <mat-icon matPrefix>tag</mat-icon>
+          <input matInput type="number" [(ngModel)]="settleGroupId" placeholder="Enter ID">
+        </mat-form-field>
+
+        <button mat-stroked-button color="primary" class="action-btn" (click)="settle()" [disabled]="!settleGroupId || isSettling">
+          <mat-icon>calculate</mat-icon> Compute Settlements
+        </button>
+      </div>
+
+      <mat-divider style="margin: 20px 0;"></mat-divider>
+
+      <div class="results-area">
+        <h4 *ngIf="transactions.length > 0">Settlement Plan:</h4>
+        
+        <mat-list *ngIf="transactions.length > 0; else emptyState">
+          <mat-list-item *ngFor="let t of transactions" class="txn-item">
+            <mat-icon matListItemIcon class="arrow-icon">arrow_forward</mat-icon>
+            <div matListItemTitle>
+              <span class="highlight">{{t.fromUser}}</span> pays <span class="highlight">{{t.toUser}}</span>
+            </div>
+            <div matListItemLine class="amount-text">
+              {{t.amount | currency:'INR'}}
+            </div>
+          </mat-list-item>
+        </mat-list>
+
+        <ng-template #emptyState>
+          <div class="empty-state" *ngIf="settleGroupId && !isSettling && transactions.length === 0">
+             <mat-icon>check_circle</mat-icon>
+             <p>All settled up! No debts found.</p>
+          </div>
+        </ng-template>
+      </div>
+
+    </mat-card>
+
+  </div>
+</div>

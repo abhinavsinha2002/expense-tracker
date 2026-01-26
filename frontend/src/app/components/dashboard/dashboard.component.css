@@ -1,0 +1,129 @@
+/* =========================================================
+   1. LAYOUT GRID
+   ========================================================= */
+.dashboard-container {
+  padding-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+/* =========================================================
+   2. STAT CARDS (Top Row)
+   ========================================================= */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
+}
+
+.stat-card {
+  display: flex;
+  flex-direction: row; /* Icon left, Text right */
+  align-items: center;
+  padding: 25px;
+  border-radius: 20px;
+  background: white;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.02); /* Very subtle shadow */
+  border: 1px solid rgba(0,0,0,0.03);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+}
+
+/* Icons */
+.icon-circle {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 20px;
+}
+.icon-circle mat-icon { font-size: 30px; width: 30px; height: 30px; }
+
+/* Icon Colors */
+.blue   { background: #eff6ff; color: #3b82f6; }
+.green  { background: #ecfdf5; color: #10b981; }
+.orange { background: #fff7ed; color: #f59e0b; }
+.red    { background: #fef2f2; color: #ef4444; }
+
+/* Text */
+.stat-content p {
+  margin: 0;
+  color: #64748b;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.stat-content h2 {
+  margin: 5px 0 0 0;
+  color: #1e293b;
+  font-size: 1.6rem;
+  font-weight: 700;
+  font-family: 'Poppins', sans-serif;
+}
+
+.stat-content h2.negative { color: #ef4444; }
+
+/* =========================================================
+   3. CHARTS SECTION
+   ========================================================= */
+.charts-section {
+  display: grid;
+  grid-template-columns: 2fr 1fr; /* Pie Chart gets more space */
+  gap: 20px;
+}
+
+.chart-card {
+  padding: 25px;
+  border-radius: 20px;
+  background: white;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+  min-height: 400px; /* Ensure height for chart */
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.card-header h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #334155;
+}
+
+.chart-wrapper {
+  height: 300px; /* Fixed height for canvas container */
+  position: relative;
+}
+
+/* Placeholder styles */
+.placeholder-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f8fafc; /* Slightly darker */
+  border: 2px dashed #e2e8f0;
+  box-shadow: none;
+}
+
+.empty-state { text-align: center; color: #94a3b8; }
+.empty-state mat-icon { font-size: 48px; width: 48px; height: 48px; opacity: 0.5; }
+
+/* =========================================================
+   4. RESPONSIVE
+   ========================================================= */
+@media (max-width: 900px) {
+  .charts-section {
+    grid-template-columns: 1fr; /* Stack charts on tablet */
+  }
+}

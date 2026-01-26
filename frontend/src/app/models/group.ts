@@ -4,7 +4,7 @@ import { User } from "./user";
 export interface Group{
     id?:number;
     name:string;
-    onwer:User;
+    owner:User;
     description?:string;
     members?:User[];
     expenses?:Expense[];

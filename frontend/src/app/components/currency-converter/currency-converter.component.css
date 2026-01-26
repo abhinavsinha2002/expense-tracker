@@ -1,0 +1,132 @@
+/* =========================================================
+   1. LAYOUT & CONTAINER
+   ========================================================= */
+.dashboard-container {
+  padding-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: center; /* Center the card horizontally */
+}
+
+.page-header {
+  width: 100%;
+  max-width: 600px;
+  /* Align text left even though container is centered */
+  display: flex;
+  justify-content: flex-start; 
+}
+
+.converter-wrapper {
+  width: 100%;
+  max-width: 600px;
+}
+
+/* =========================================================
+   2. CARD STYLING
+   ========================================================= */
+.content-card {
+  padding: 30px;
+  border-radius: 20px;
+  background: white;
+  border: 1px solid rgba(0,0,0,0.05);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+.card-header h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.icon-circle {
+  width: 45px; height: 45px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+}
+.blue { background: #eff6ff; color: #3b82f6; }
+
+/* =========================================================
+   3. INPUTS & BUTTONS
+   ========================================================= */
+.form-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.full-width { width: 100%; }
+
+.currency-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.currency-input {
+  flex: 1; /* Inputs take available space */
+}
+
+.swap-btn {
+  color: #64748b;
+  transform: rotate(0deg);
+  transition: transform 0.3s ease;
+}
+.swap-btn:hover {
+  background-color: #f1f5f9;
+  transform: rotate(180deg); /* Nice animation on hover */
+  color: #3b82f6;
+}
+
+.convert-btn {
+  height: 48px;
+  font-size: 1rem;
+  border-radius: 10px;
+  margin-top: 10px;
+}
+
+/* =========================================================
+   4. RESULTS DISPLAY
+   ========================================================= */
+.result-box {
+  margin-top: 30px;
+  padding: 20px;
+  background-color: #f8fafc; /* Light Slate BG */
+  border-radius: 15px;
+  text-align: center;
+  border: 1px dashed #e2e8f0;
+}
+
+.conversion-text {
+  color: #64748b;
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.conversion-value {
+  margin: 5px 0;
+  color: #1e293b;
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.rate-info {
+  margin: 0;
+  color: #94a3b8;
+  font-size: 0.8rem;
+}
+
+/* Animation */
+.fade-in { animation: fadeIn 0.4s ease-out; }
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}

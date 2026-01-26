@@ -1,0 +1,59 @@
+<div class="dashboard-container fade-in-up">
+  
+  <div class="page-header">
+    <div class="header-title">
+      <h1>Account Settings</h1>
+      <p>Manage your profile and security preferences</p>
+    </div>
+  </div>
+
+  <div class="settings-wrapper">
+    
+    <mat-card class="content-card">
+      
+      <div class="card-header">
+        <div class="icon-circle blue">
+          <mat-icon>person</mat-icon>
+        </div>
+        <h3>Profile Information</h3>
+      </div>
+
+      <div class="profile-details">
+        <div class="detail-item">
+          <label>Current User</label>
+          <div class="value-box">
+            <mat-icon>badge</mat-icon>
+            <span>{{ auth.getUsername() }}</span>
+          </div>
+        </div>
+      </div>
+
+      <mat-divider style="margin: 30px 0;"></mat-divider>
+
+      <div class="card-header">
+        <div class="icon-circle orange">
+          <mat-icon>lock_reset</mat-icon>
+        </div>
+        <h3>Security</h3>
+      </div>
+
+      <p class="section-desc">
+        Forgot your password? Enter your email address below and we will send you a secure link to reset it.
+      </p>
+
+      <div class="reset-form">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Email Address</mat-label>
+          <mat-icon matPrefix>email</mat-icon>
+          <input matInput placeholder="name@example.com" [(ngModel)]="email" type="email">
+        </mat-form-field>
+
+        <button mat-flat-button color="warn" class="action-btn" (click)="requestReset()" [disabled]="isLoading || !email">
+          <mat-icon>send</mat-icon> Request Password Reset
+        </button>
+      </div>
+
+    </mat-card>
+
+  </div>
+</div>

@@ -1,0 +1,76 @@
+<div class="dashboard-container fade-in-up">
+  
+  <div class="page-header">
+    <div class="header-title">
+      <h1>Transactions</h1>
+      <p>Manage and track your daily spending</p>
+    </div>
+
+    <div class="header-actions">
+      <input #fileInput type="file" (change)="onFileSelected($event)" accept=".csv" style="display:none" />
+
+      <button mat-stroked-button class="secondary-btn" (click)="triggerFileInput()">
+        <mat-icon>upload_file</mat-icon> Import
+      </button>
+      
+      <button mat-stroked-button class="secondary-btn" (click)="exportCSV()">
+        <mat-icon>download</mat-icon> Export
+      </button>
+
+      <button mat-flat-button class="primary-btn" (click)="openAddExpense()">
+        <mat-icon>add</mat-icon> Add Expense
+      </button>
+    </div>
+  </div>
+
+  <div class="table-container mat-elevation-z0">
+    
+    <table mat-table [dataSource]="expenses">
+
+      <ng-container matColumnDef="date">
+        <th mat-header-cell *matHeaderCellDef> Date </th>
+        <td mat-cell *matCellDef="let e" class="date-cell"> 
+          {{e.date | date:'mediumDate'}} 
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="category">
+        <th mat-header-cell *matHeaderCellDef> Category </th>
+        <td mat-cell *matCellDef="let e">
+          <span class="category-badge">{{ e.category?.name || 'Uncategorized' }}</span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="description">
+        <th mat-header-cell *matHeaderCellDef> Description </th>
+        <td mat-cell *matCellDef="let e" class="desc-cell"> {{e.description}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="amount">
+        <th mat-header-cell *matHeaderCellDef> Amount </th>
+        <td mat-cell *matCellDef="let e" class="amount-cell"> 
+          {{e.amount | currency:'INR'}} 
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef> </th>
+        <td mat-cell *matCellDef="let e" style="text-align: right;">
+          <button mat-icon-button color="warn" (click)="deleteExpense(e.id)" matTooltip="Delete">
+            <mat-icon>delete_outline</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="hover-row"></tr>
+      
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell" colspan="5" style="text-align: center; padding: 40px; color: #94a3b8;">
+          No transactions found. Click "+ Add Expense" to start.
+        </td>
+      </tr>
+    </table>
+
+  </div>
+</div>

@@ -1,0 +1,110 @@
+/* =========================================================
+   1. LAYOUT GRID
+   ========================================================= */
+.dashboard-container {
+  padding-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.groups-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 24px;
+  align-items: start;
+}
+
+/* =========================================================
+   2. CARD STYLING
+   ========================================================= */
+.content-card {
+  padding: 30px;
+  border-radius: 20px;
+  background: white;
+  border: 1px solid rgba(0,0,0,0.05);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 10px;
+}
+
+.card-header h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.card-desc {
+  color: #64748b;
+  margin-bottom: 25px;
+  font-size: 0.9rem;
+}
+
+/* Icons */
+.icon-circle {
+  width: 45px;
+  height: 45px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.icon-circle mat-icon { font-size: 24px; width: 24px; height: 24px; }
+
+.blue { background: #eff6ff; color: #3b82f6; }
+.green { background: #ecfdf5; color: #10b981; }
+
+/* =========================================================
+   3. FORMS & BUTTONS
+   ========================================================= */
+.full-width { width: 100%; }
+
+.action-btn {
+  width: 100%;
+  height: 48px;
+  border-radius: 10px;
+  font-size: 1rem;
+  margin-top: 10px;
+}
+
+/* =========================================================
+   4. SETTLEMENT RESULTS
+   ========================================================= */
+.results-area h4 {
+  margin: 0 0 10px 0;
+  color: #334155;
+}
+
+.txn-item {
+  background: #f8fafc;
+  border-radius: 10px;
+  margin-bottom: 8px;
+  border: 1px solid #e2e8f0;
+}
+
+.highlight {
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.amount-text {
+  color: #ef4444; 
+  font-weight: 600;
+}
+
+.arrow-icon {
+  color: #cbd5e1;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 20px;
+  color: #10b981;
+}
+.empty-state mat-icon { font-size: 40px; width: 40px; height: 40px; margin-bottom: 10px; }

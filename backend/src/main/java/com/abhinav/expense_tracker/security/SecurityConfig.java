@@ -19,9 +19,9 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
-        http.csrf().disable()
+        http.csrf(csrf->csrf.disable())
             .authorizeHttpRequests(auth->auth
-                .requestMatchers("/auth/**","/health","/h2-console/**","/error","/v3/api-docs/**","/swagger-ui/**","/ws/**").permitAll()
+                .requestMatchers("/auth/**","/health","/h2-console/**","/error","/v3/api-docs/**","/swagger-ui/**","/.well-known/**","/favicon.ico","/ws/**,").permitAll()
                 .anyRequest().authenticated()
             )
             .cors(cors->cors.configurationSource(request->{

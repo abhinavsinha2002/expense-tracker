@@ -10,6 +10,7 @@
   justify-content: center;
   align-items: center;
   
+  
   /* We don't need the background color here anymore because 
      the Dashboard layout already provides the dark background. */
 }

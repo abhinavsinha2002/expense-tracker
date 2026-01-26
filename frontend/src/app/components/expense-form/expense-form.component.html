@@ -1,0 +1,84 @@
+<div class="modal-container">
+  
+  <div class="modal-header">
+    <h2>Add Expense</h2>
+    <button mat-icon-button (click)="close()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <mat-dialog-content class="modal-content">
+    <form [formGroup]="form">
+      
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Description</mat-label>
+        <mat-icon matPrefix>edit</mat-icon>
+        <input matInput placeholder="e.g. Lunch" formControlName="description">
+      </mat-form-field>
+
+      <div class="row-inputs">
+        <mat-form-field appearance="outline" style="flex: 1;">
+          <mat-label>Amount</mat-label>
+          <span matPrefix>₹ &nbsp;</span>
+          <input matInput type="number" formControlName="amount">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" style="flex: 1;">
+          <mat-label>Category</mat-label>
+          <mat-icon matPrefix>category</mat-icon>
+          <input matInput placeholder="Food" formControlName="category">
+        </mat-form-field>
+      </div>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Group ID (Optional)</mat-label>
+        <mat-icon matPrefix>group</mat-icon>
+        <input matInput type="number" formControlName="groupId">
+      </mat-form-field>
+
+      <div class="splits-section">
+        <div class="splits-header">
+          <h3>Split this expense</h3>
+          <button mat-stroked-button type="button" (click)="addSplit()" color="primary">
+            <mat-icon>add</mat-icon> Add Split
+          </button>
+        </div>
+
+        <div formArrayName="splits">
+          <div *ngFor="let split of splits.controls; let i=index" [formGroupName]="i" class="split-row fade-in">
+            
+            <mat-form-field appearance="outline" style="flex: 2;">
+              <mat-label>Member Name/ID</mat-label>
+              <input matInput placeholder="John" formControlName="member">
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" style="flex: 1;">
+              <mat-label>Amount</mat-label>
+              <span matPrefix>₹&nbsp;</span>
+              <input matInput type="number" formControlName="amount">
+            </mat-form-field>
+
+            <button mat-icon-button color="warn" type="button" (click)="removeSplit(i)">
+              <mat-icon>delete</mat-icon>
+            </button>
+            
+          </div>
+        </div>
+        
+        <p *ngIf="splits.length === 0" class="empty-hint">
+          No splits added. The full amount will be assigned to you.
+        </p>
+
+      </div>
+
+    </form>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end" class="modal-actions">
+    <button mat-stroked-button (click)="close()">Cancel</button>
+    <button mat-flat-button color="primary" class="save-btn" (click)="save()" [disabled]="form.invalid || isSubmitting">
+      Save Expense
+    </button>
+  </mat-dialog-actions>
+
+</div>
