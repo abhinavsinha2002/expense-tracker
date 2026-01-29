@@ -1,0 +1,33 @@
+<div class="verify-container fade-in-up">
+  <mat-card class="status-card">
+    
+    <div *ngIf="status === 'loading'" class="state-content">
+      <mat-spinner diameter="50"></mat-spinner>
+      <h3>Verifying...</h3>
+      <p>Please wait while we secure your account.</p>
+    </div>
+
+    <div *ngIf="status === 'success'" class="state-content">
+      <div class="icon-circle green">
+        <mat-icon>check_circle</mat-icon>
+      </div>
+      <h3>Verified!</h3>
+      <p>{{ message }}</p>
+      <button mat-flat-button color="primary" (click)="goToLogin()">
+        Proceed to Login
+      </button>
+    </div>
+
+    <div *ngIf="status === 'error'" class="state-content">
+      <div class="icon-circle red">
+        <mat-icon>error</mat-icon>
+      </div>
+      <h3>Verification Failed</h3>
+      <p>{{ message }}</p>
+      <button mat-stroked-button color="warn" (click)="goToLogin()">
+        Back to Login
+      </button>
+    </div>
+
+  </mat-card>
+</div>

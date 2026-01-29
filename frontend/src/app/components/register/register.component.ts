@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service'; // Adjust path if needed
 import { Router, RouterLink } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
@@ -8,14 +9,13 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { CommonModule } from '@angular/common';
-import { User } from '../../models/user';
 
 @Component({
   selector: 'app-register',
   standalone: true,
   imports: [
     CommonModule,
-    ReactiveFormsModule,
+    FormsModule,
     MatCardModule,
     MatInputModule,
     MatButtonModule,
@@ -27,40 +27,72 @@ import { User } from '../../models/user';
   styleUrl: './register.component.css'
 })
 export class RegisterComponent{
-    form:FormGroup;
+    user = {username:'',email:'',password:''};
 
-    constructor(private fb:FormBuilder,private auth:AuthService,private router:Router,private snackBar:MatSnackBar){
-        this.form = this.fb.group({
-            username:['',Validators.required],
-            email:['',Validators.required,Validators.email],
-            password:['',[Validators.required,Validators.minLength(6)]]
+    usernameAvailable: boolean | null = null;
+    emailAvailable: boolean | null = null;
+
+    isEmailFormatValid = true;
+
+    hasMinLength = false;
+    hasNumber = false;
+    hasUpper = false;
+    hasSymbol = false;
+
+    passwordVisible = false;
+
+    constructor(private auth:AuthService,private router:Router){}
+
+    checkUsername(){
+        if(this.user.username.length<3){
+            this.usernameAvailable = null;
+            return;
+        }
+        this.auth.checkAvailability('username',this.user.username).subscribe(res =>{
+            this.usernameAvailable = res.available;
         })
     }
 
-    private showMessage(message: string, isError = false) {
-    this.snackBar.open(message, 'Close', {
-      duration: 3000,
-      horizontalPosition: 'center',
-      verticalPosition: 'top',
-      panelClass: isError ? ['error-snackbar'] : ['success-snackbar']
-    });
-  }
+    checkEmail(){
+        this.emailAvailable = null;
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        this.isEmailFormatValid = emailRegex.test(this.user.email);
+        if(!this.isEmailFormatValid){
+            return;
+        }
+        this.auth.checkAvailability('email',this.user.email).subscribe(res=>{
+            this.emailAvailable = res.available;
+        })
+    }
+
+    checkPassword(){
+        const p = this.user.password;
+        this.hasMinLength = p.length>=6;
+        this.hasNumber = /\d/.test(p);
+        this.hasUpper = /[A-Z]/.test(p);
+        this.hasSymbol = /[!@#$%^&*(),.?":{}|<>]/.test(p);
+    }
+
+    get isFormValid():boolean{
+        return (this.usernameAvailable === true) &&
+                (this.emailAvailable === true) &&
+                (this.hasMinLength && this.hasNumber && this.hasUpper && this.hasSymbol);
+    }
 
   register(){
-    if(this.form.invalid){
-        return;
+    if(this.isFormValid){
+        this.auth.register(this.user).subscribe({
+            next:()=>{
+                alert('Registration successful! Please check your email to verify.');
+                this.router.navigate(['/login']);
+            },
+            error:(err)=>alert('Error: '+err.message)
+        });
     }
-    const user:User = this.form.value as User;
-
-    this.auth.register(user).subscribe({
-        next:()=>{
-            this.showMessage('Registration successful! Please login.');
-            this.router.navigate(['/login']);
-        },
-        error:(e)=>{
-            const errorMsg = e.error || e.message || 'Registration failed';
-            this.showMessage(errorMsg,true);
-        }
-    })
-  }
+    }
 }
+
+
+    
+        
+        

@@ -1,60 +1,93 @@
-<div class="login-container">
-  <div class="login-card fade-in-up">
-    
-    <div class="card-header">
-      <div class="logo-icon">
-        <mat-icon>{{ isLoginView ? 'lock' : 'mail_lock' }}</mat-icon>
-      </div>
-      <h2>{{ isLoginView ? 'Welcome Back' : 'Reset Password' }}</h2>
-      <p>{{ isLoginView ? 'Enter your credentials to access your account' : 'Enter your email to receive a reset link' }}</p>
-    </div>
-
-    <form [formGroup]="form" (ngSubmit)="login()" *ngIf="isLoginView; else resetTemplate">
+<section class="ftco-section img js-fullheight login-bg">
+  <div class="container">
+    <div class="row justify-content-center">
       
-      <mat-form-field appearance="outline" class="custom-field">
-        <mat-label>Username</mat-label>
-        <mat-icon matPrefix>person</mat-icon>
-        <input matInput placeholder="Ex. Abhinav" formControlName="username">
-      </mat-form-field>
-
-      <mat-form-field appearance="outline" class="custom-field">
-        <mat-label>Password</mat-label>
-        <mat-icon matPrefix>lock_open</mat-icon>
-        <input matInput type="password" placeholder="••••••••" formControlName="password">
-      </mat-form-field>
-
-      <button mat-flat-button color="primary" class="login-btn" [disabled]="form.invalid">
-        LOG IN
-      </button>
-
-    </form>
-
-    <div class="card-footer">
-      <a (click)="toggleView()">Forgot Password?</a>
-      <div class="divider"></div>
-      <p>Don't have an account? <a routerLink="/register">Register</a></p>
-    </div>
-
-    <ng-template #resetTemplate>
-      <form [formGroup]="resetForm" (ngSubmit)="requestReset()">
+      <div class="col-md-7 col-lg-5"> 
         
-        <mat-form-field appearance="outline" class="custom-field">
-          <mat-label>Email Address</mat-label>
-          <mat-icon matPrefix>email</mat-icon>
-          <input matInput placeholder="name@example.com" formControlName="email">
-        </mat-form-field>
+        <div class="login-wrap">
+          
+          <h3 class="mb-4 text-center">{{ isLoginView ? 'Welcome Back' : 'Reset Password' }}</h3>
+          
+          <form [formGroup]="form" (ngSubmit)="login()" *ngIf="isLoginView; else resetTemplate" class="signin-form">
+            
+            <div class="form-group">
+              <input type="text" class="form-control" placeholder="Username" formControlName="username" required>
+              
+              <span class="field-icon">
+                <mat-icon *ngIf="isCheckingUser" class="spin">sync</mat-icon>
+                
+                <mat-icon *ngIf="!isCheckingUser && userExists === null">person</mat-icon>
+                
+                <mat-icon *ngIf="!isCheckingUser && userExists === true" class="valid-user">check_circle</mat-icon>
+                
+                <mat-icon *ngIf="!isCheckingUser && userExists === false" class="invalid-user" 
+                          matTooltip="User not found">cancel</mat-icon>
+              </span>
+              
+              <small *ngIf="userExists === false" class="text-danger fade-in">
+                User not found. Register?
+              </small>
+            </div>
 
-        <button mat-flat-button color="primary" class="login-btn" [disabled]="resetForm.invalid">
-          SEND RESET LINK
-        </button>
+            <div class="form-group">
+              <input [type]="hidePassword ? 'password' : 'text'" 
+                     class="form-control" 
+                     placeholder="Password" 
+                     formControlName="password" (keydown)="checkCaps($event)"
+                     required>
+            <small *ngIf="capsOn" class="text-warning">Caps Lock is ON</small>
+              
+              <span class="field-icon click-icon" (click)="togglePasswordVisibility()">
+                <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+              </span>
+            </div>
 
-        <div class="card-footer">
-          <a (click)="toggleView()">Back to Login</a>
+            <div class="form-group">
+              <button type="submit" 
+                      class="form-control btn btn-primary submit px-3" 
+                      [disabled]="form.invalid">
+                LOG IN
+              </button>
+            </div>
+
+            <div class="form-group d-md-flex" style="margin-top: 20px;">
+              <div class="w-50">
+                <label class="checkbox-wrap checkbox-primary">Remember Me
+                  <input type="checkbox" [checked]="rememberMe" (change)="toggleRememberMe($event)">
+                  <span class="checkmark"></span>
+                </label>
+              </div>
+              <div class="w-50 text-md-right">
+                <a (click)="toggleView()" class="forgot-link">Forgot Password?</a>
+              </div>
+            </div>
+          </form>
+
+          <ng-template #resetTemplate>
+             <form [formGroup]="resetForm" (ngSubmit)="requestReset()" class="signin-form">
+              <div class="form-group">
+                <input type="email" class="form-control" placeholder="Email Address" formControlName="email" required>
+                <span class="field-icon"><mat-icon>email</mat-icon></span>
+              </div>
+              <div class="form-group">
+                <button type="submit" class="form-control btn btn-primary submit px-3" [disabled]="resetForm.invalid">SEND RESET LINK</button>
+              </div>
+              <div class="form-group d-md-flex">
+                <div class="w-100 text-center">
+                  <a (click)="toggleView()" class="forgot-link">&larr; Back to Login</a>
+                </div>
+              </div>
+            </form>
+          </ng-template>
+
+          <div class="text-center mt-4" *ngIf="isLoginView">
+             <p class="w-100 text-center register-text">
+                Don't have an account? <a routerLink="/register" class="register-link">Register Now</a>
+             </p>
+          </div>
+
         </div>
-      </form>
-    </ng-template>
-
-
-
+      </div>
+    </div>
   </div>
-</div>
+</section>

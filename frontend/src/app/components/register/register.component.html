@@ -9,30 +9,80 @@
       <p>Join us to start tracking your finances</p>
     </div>
 
-    <form [formGroup]="form" (ngSubmit)="register()">
+    <form (ngSubmit)="register()">
       
       <mat-form-field appearance="outline" class="custom-field">
         <mat-label>Username</mat-label>
         <mat-icon matPrefix>person</mat-icon>
-        <input matInput placeholder="Choose a username" formControlName="username">
-        <mat-error *ngIf="form.get('username')?.hasError('required')">Username is required</mat-error>
+        
+        <input matInput 
+               name="username" 
+               [(ngModel)]="user.username" 
+               (input)="checkUsername()" 
+               placeholder="Choose a username" 
+               required>
+               
+        <mat-icon *ngIf="usernameAvailable === true" matSuffix class="status-icon success">check_circle</mat-icon>
+        <mat-icon *ngIf="usernameAvailable === false" matSuffix class="status-icon error">cancel</mat-icon>
+        <mat-hint *ngIf="usernameAvailable === false" class="error-text">Username taken</mat-hint>
       </mat-form-field>
 
       <mat-form-field appearance="outline" class="custom-field">
         <mat-label>Email Address</mat-label>
         <mat-icon matPrefix>email</mat-icon>
-        <input matInput placeholder="name@example.com" formControlName="email">
-        <mat-error *ngIf="form.get('email')?.hasError('email')">Please enter a valid email</mat-error>
+        
+        <input matInput 
+               name="email" 
+               [(ngModel)]="user.email" 
+               (input)="checkEmail()" 
+               placeholder="name@example.com" 
+               required>
+               
+        <mat-icon *ngIf="isEmailFormatValid && emailAvailable === true" matSuffix class="status-icon success">check_circle</mat-icon>
+        
+        <mat-icon *ngIf="!isEmailFormatValid || emailAvailable === false" matSuffix class="status-icon error">cancel</mat-icon>
+
+        <mat-hint *ngIf="!isEmailFormatValid && user.email.length > 0" class="error-text">
+            Invalid email format (e.g. user@domain.com)
+        </mat-hint>
+        
+        <mat-hint *ngIf="isEmailFormatValid && emailAvailable === false" class="error-text">
+            Email already registered
+        </mat-hint>
       </mat-form-field>
 
       <mat-form-field appearance="outline" class="custom-field">
         <mat-label>Password</mat-label>
         <mat-icon matPrefix>lock</mat-icon>
-        <input matInput type="password" placeholder="Min 6 characters" formControlName="password">
-        <mat-error *ngIf="form.get('password')?.hasError('minlength')">Must be at least 6 characters</mat-error>
+        
+        <input matInput 
+               name="password" 
+               [type]="passwordVisible ? 'text' : 'password'" 
+               [(ngModel)]="user.password" 
+               (input)="checkPassword()" 
+               required>
+               
+        <button mat-icon-button matSuffix type="button" (click)="passwordVisible = !passwordVisible">
+          <mat-icon>{{passwordVisible ? 'visibility' : 'visibility_off'}}</mat-icon>
+        </button>
       </mat-form-field>
 
-      <button mat-flat-button color="primary" class="register-btn" [disabled]="form.invalid">
+      <div class="password-checklist" *ngIf="user.password">
+        <div class="check-item" [class.valid]="hasMinLength">
+          <mat-icon>{{ hasMinLength ? 'check' : 'circle' }}</mat-icon> <span>6+ Characters</span>
+        </div>
+        <div class="check-item" [class.valid]="hasNumber">
+          <mat-icon>{{ hasNumber ? 'check' : 'circle' }}</mat-icon> <span>Number</span>
+        </div>
+        <div class="check-item" [class.valid]="hasUpper">
+          <mat-icon>{{ hasUpper ? 'check' : 'circle' }}</mat-icon> <span>Uppercase</span>
+        </div>
+        <div class="check-item" [class.valid]="hasSymbol">
+          <mat-icon>{{ hasSymbol ? 'check' : 'circle' }}</mat-icon> <span>Symbol</span>
+        </div>
+      </div>
+
+      <button mat-flat-button color="primary" class="register-btn" [disabled]="!isFormValid">
         CREATE ACCOUNT
       </button>
 
@@ -40,7 +90,7 @@
 
     <div class="card-footer">
       <div class="divider"></div>
-      <p>Already have an account? <a routerLink="/login">Log In</a></p>
+      <p>Already have an account? <a routerLink="">Log In</a></p>
     </div>
 
   </div>

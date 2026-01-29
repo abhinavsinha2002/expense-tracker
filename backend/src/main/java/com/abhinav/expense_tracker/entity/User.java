@@ -1,6 +1,10 @@
 package com.abhinav.expense_tracker.entity;
 
+import java.time.LocalDateTime;
 import java.util.*;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -17,6 +21,15 @@ public class User {
 
     @ManyToMany(mappedBy="members")
     private Set<ExpenseGroup> groups = new HashSet<>();
+
+    private String phoneNumber;
+    private boolean isPhoneVerified = false;
+    private String profilePictureURL;
+
+    @JsonIgnore
+    private String otpCode;
+    @JsonIgnore
+    private LocalDateTime otpExpiry;
 
     public Long getId() {
         return id;
@@ -72,6 +85,46 @@ public class User {
 
     public void setGroups(Set<ExpenseGroup> groups) {
         this.groups = groups;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public boolean isPhoneVerified() {
+        return isPhoneVerified;
+    }
+
+    public void setPhoneVerified(boolean isPhoneVerified) {
+        this.isPhoneVerified = isPhoneVerified;
+    }
+
+    public String getProfilePictureURL() {
+        return profilePictureURL;
+    }
+
+    public void setProfilePictureURL(String profilePictureURL) {
+        this.profilePictureURL = profilePictureURL;
+    }
+
+    public String getOtpCode() {
+        return otpCode;
+    }
+
+    public void setOtpCode(String otpCode) {
+        this.otpCode = otpCode;
+    }
+
+    public LocalDateTime getOtpExpiry() {
+        return otpExpiry;
+    }
+
+    public void setOtpExpiry(LocalDateTime otpExpiry) {
+        this.otpExpiry = otpExpiry;
     };
     
 }

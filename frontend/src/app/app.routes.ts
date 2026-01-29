@@ -7,15 +7,25 @@ import { GroupComponent } from './components/groups/groups.component';
 import { GroupChatComponent } from './components/group-chat/group-chat.component';
 import { CurrencyConverterComponent } from './components/currency-converter/currency-converter.component';
 import { SettingsComponent } from './components/settings/settings.component';
+import { VerifyComponent } from './components/verify/verify.component'
+import { MainLayoutComponent } from './components/main-layout/main-layout.component';
 //import { authGuard } from './services/auth.guard';
 
 export const routes: Routes = [
-  { path: 'login', component: LoginComponent },
+  { path: '', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
-  { path: '', component: DashboardComponent },
-  { path: 'expenses', component: ExpensesComponent },
-  { path: 'groups', component: GroupComponent },
-  { path: 'chat', component: GroupChatComponent },
-  { path: 'currency', component: CurrencyConverterComponent },
-  { path: 'settings', component: SettingsComponent }
+  {
+    path:'main',
+    component: MainLayoutComponent,
+    children:[
+      { path: '', component: DashboardComponent },
+      { path: 'expenses', component: ExpensesComponent },
+      { path: 'groups', component: GroupComponent },
+      { path: 'chat', component: GroupChatComponent },
+      { path: 'currency', component: CurrencyConverterComponent },
+      { path: 'settings', component: SettingsComponent },
+      { path: 'verify',component:VerifyComponent}
+    ]
+  }
+  
 ];

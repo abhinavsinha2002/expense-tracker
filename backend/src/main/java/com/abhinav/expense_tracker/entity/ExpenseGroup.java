@@ -1,6 +1,9 @@
 package com.abhinav.expense_tracker.entity;
 
 import java.util.*;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -17,6 +20,40 @@ public class ExpenseGroup {
     private Set<User> members=new HashSet<>();
     @OneToMany(mappedBy="group",cascade = CascadeType.ALL,orphanRemoval = true)
     private List<Expense> expenses=new ArrayList<>();
+
+    @Column(unique = true)
+    private String inviteToken;
+
+    private String currency;
+
+    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL)
+    @JsonIgnore // Prevent infinite loops! (See explanation below)
+    private List<GroupActivity> activities;
+
+    public String getInviteToken() {
+        return inviteToken;
+    }
+    public void setInviteToken(String inviteToken) {
+        this.inviteToken = inviteToken;
+    }
+    public String getCurrency() {
+        return currency;
+    }
+    public void setCurrency(String currency) {
+        this.currency = currency;
+    }
+    public List<GroupActivity> getActivities() {
+        return activities;
+    }
+    public void setActivities(List<GroupActivity> activities) {
+        this.activities = activities;
+    }
+    @PrePersist
+    public void generateToken(){
+        if(this.inviteToken==null){
+            this.inviteToken = java.util.UUID.randomUUID().toString();
+        }
+    }
     public ExpenseGroup(){}
     public Long getId() {
         return id;

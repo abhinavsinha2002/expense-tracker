@@ -36,7 +36,7 @@ public class AuthService {
         vt.setExpiryDate(new Date(System.currentTimeMillis()+24*3600*1000));
         verificationTokenRepository.save(vt);
         String link=appUrl+"/verify?token="+token;
-        emailService.sendEmail(saved.getEmail(),"Verify your account","Click to verify"+link);
+        emailService.sendEmail(saved.getEmail(),saved.getUsername(),link);
         return saved;
     }
 

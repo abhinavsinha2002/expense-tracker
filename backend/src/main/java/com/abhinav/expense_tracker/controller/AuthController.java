@@ -1,20 +1,19 @@
 package com.abhinav.expense_tracker.controller;
 
+import java.util.Collections;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.*;
 
 import com.abhinav.expense_tracker.dto.AuthRequest;
 import com.abhinav.expense_tracker.dto.AuthResponse;
 import com.abhinav.expense_tracker.entity.User;
+import com.abhinav.expense_tracker.repository.UserRepository;
 import com.abhinav.expense_tracker.security.JwtUtil;
 import com.abhinav.expense_tracker.service.AuthService;
 
@@ -26,6 +25,7 @@ public class AuthController {
     @Autowired private AuthService authService;
     @Autowired private AuthenticationManager authManager;
     @Autowired private JwtUtil jwtUtil;
+    @Autowired private UserRepository userRepository;
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody User user,HttpServletRequest req){
@@ -68,4 +68,19 @@ public class AuthController {
         return ResponseEntity.ok("Password changed");
     }
     
+    @GetMapping("/check-availability")
+    public ResponseEntity<?> checkAvailability(@RequestParam String field,@RequestParam String value){
+        boolean exists = false;
+
+        if (field == null || value == null) {
+            return ResponseEntity.badRequest().body("Field and value are required");
+        }
+        if("username".equals(field)){
+            exists = userRepository.existsByUsername(value);
+        }
+        else if("email".equals(field)){
+            exists = userRepository.existsByEmail(value);
+        }
+        return ResponseEntity.ok(Collections.singletonMap("available", !exists));
+    }
 }
