@@ -13,11 +13,16 @@ public class User {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY) private Long id;
     @Column(nullable = false, unique = true) private String username;
     @Column(nullable = false, unique = true) private String email;
-    @Column(nullable = false) private String password;
+    @Column(nullable = true) private String password;
     private boolean enabled = false;
 
     @OneToMany(mappedBy = "owner",cascade = CascadeType.ALL)
     private List<Expense> expenses=new ArrayList<>();
+
+    private String providerId;
+
+    @Enumerated(EnumType.STRING)
+    private AuthProvider authProvider;
 
     @ManyToMany(mappedBy="members")
     private Set<ExpenseGroup> groups = new HashSet<>();
@@ -25,6 +30,7 @@ public class User {
     private String phoneNumber;
     private boolean isPhoneVerified = false;
     private String profilePictureURL;
+
 
     @JsonIgnore
     private String otpCode;
@@ -125,6 +131,28 @@ public class User {
 
     public void setOtpExpiry(LocalDateTime otpExpiry) {
         this.otpExpiry = otpExpiry;
+    }
+
+    public String getProviderId() {
+        return providerId;
+    }
+
+    public void setProviderId(String providerId) {
+        this.providerId = providerId;
+    }
+
+    public AuthProvider getAuthProvider() {
+        return authProvider;
+    }
+
+    public void setAuthProvider(AuthProvider authProvider) {
+        this.authProvider = authProvider;
     };
     
+}
+
+enum AuthProvider{
+    LOCAL,
+    GOOGLE,
+    GITHUB
 }

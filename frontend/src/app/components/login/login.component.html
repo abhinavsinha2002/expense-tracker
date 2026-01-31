@@ -1,93 +1,111 @@
-<section class="ftco-section img js-fullheight login-bg">
-  <div class="container">
-    <div class="row justify-content-center">
-      
-      <div class="col-md-7 col-lg-5"> 
-        
-        <div class="login-wrap">
-          
-          <h3 class="mb-4 text-center">{{ isLoginView ? 'Welcome Back' : 'Reset Password' }}</h3>
-          
-          <form [formGroup]="form" (ngSubmit)="login()" *ngIf="isLoginView; else resetTemplate" class="signin-form">
+<div class="split-container">
+    
+    <div class="login-panel">
+        <div class="content-wrapper">
             
-            <div class="form-group">
-              <input type="text" class="form-control" placeholder="Username" formControlName="username" required>
-              
-              <span class="field-icon">
-                <mat-icon *ngIf="isCheckingUser" class="spin">sync</mat-icon>
+            <div class="brand-header">
+                <mat-icon class="brand-icon">account_balance_wallet</mat-icon>
+                <h1>HISAB<span class="highlight">KITAB</span></h1>
+                <p class="subtitle">PREMIUM EXPENSE TRACKING</p>
+            </div>
+
+            <div class="login-form-container" [class.shake-crash]="isLoginError">
                 
-                <mat-icon *ngIf="!isCheckingUser && userExists === null">person</mat-icon>
-                
-                <mat-icon *ngIf="!isCheckingUser && userExists === true" class="valid-user">check_circle</mat-icon>
-                
-                <mat-icon *ngIf="!isCheckingUser && userExists === false" class="invalid-user" 
-                          matTooltip="User not found">cancel</mat-icon>
-              </span>
-              
-              <small *ngIf="userExists === false" class="text-danger fade-in">
-                User not found. Register?
-              </small>
-            </div>
+                <h3 class="welcome-text">
+                    {{ isLoginView ? (welcomeName ? 'Welcome, ' + welcomeName : 'Welcome Back') : 'Reset Password' }}
+                </h3>
 
-            <div class="form-group">
-              <input [type]="hidePassword ? 'password' : 'text'" 
-                     class="form-control" 
-                     placeholder="Password" 
-                     formControlName="password" (keydown)="checkCaps($event)"
-                     required>
-            <small *ngIf="capsOn" class="text-warning">Caps Lock is ON</small>
-              
-              <span class="field-icon click-icon" (click)="togglePasswordVisibility()">
-                <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
-              </span>
-            </div>
+                <form [formGroup]="form" (ngSubmit)="login()" *ngIf="isLoginView; else resetTemplate">
 
-            <div class="form-group">
-              <button type="submit" 
-                      class="form-control btn btn-primary submit px-3" 
-                      [disabled]="form.invalid">
-                LOG IN
-              </button>
-            </div>
+                    <div class="form-group floating-group">
+                        <input type="text" class="form-control" formControlName="username" required placeholder=" ">
+                        <label class="floating-label">Username</label>
+                        
+                        <span class="field-icon">
+                            <mat-icon *ngIf="!isCheckingUser && userExists === null">person</mat-icon>
+                            
+                            <mat-icon *ngIf="isCheckingUser" class="spin">sync</mat-icon>
+                            
+                            <mat-icon *ngIf="!isCheckingUser && userExists === true" class="valid-user">check_circle</mat-icon>
+                            
+                            <mat-icon *ngIf="!isCheckingUser && userExists === false" class="invalid-user" matTooltip="User not found">cancel</mat-icon>
+                        </span>
+                        
+                        <small *ngIf="userExists === false" class="text-danger fade-in">
+                            User not found. Register?
+                        </small>
+                    </div>
 
-            <div class="form-group d-md-flex" style="margin-top: 20px;">
-              <div class="w-50">
-                <label class="checkbox-wrap checkbox-primary">Remember Me
-                  <input type="checkbox" [checked]="rememberMe" (change)="toggleRememberMe($event)">
-                  <span class="checkmark"></span>
-                </label>
-              </div>
-              <div class="w-50 text-md-right">
-                <a (click)="toggleView()" class="forgot-link">Forgot Password?</a>
-              </div>
-            </div>
-          </form>
+                    <div class="form-group floating-group">
+                        <input [type]="hidePassword ? 'password' : 'text'" class="form-control" formControlName="password" (keydown)="checkCaps($event)" required placeholder=" ">
+                        <label class="floating-label">Password</label>
 
-          <ng-template #resetTemplate>
-             <form [formGroup]="resetForm" (ngSubmit)="requestReset()" class="signin-form">
-              <div class="form-group">
-                <input type="email" class="form-control" placeholder="Email Address" formControlName="email" required>
-                <span class="field-icon"><mat-icon>email</mat-icon></span>
-              </div>
-              <div class="form-group">
-                <button type="submit" class="form-control btn btn-primary submit px-3" [disabled]="resetForm.invalid">SEND RESET LINK</button>
-              </div>
-              <div class="form-group d-md-flex">
-                <div class="w-100 text-center">
-                  <a (click)="toggleView()" class="forgot-link">&larr; Back to Login</a>
+                        <small *ngIf="capsOn" class="caps-warning">⚠️ Caps Lock is ON</small>
+
+                        <span class="field-icon click-icon" (click)="togglePasswordVisibility()">
+                            <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+                        </span>
+                    </div>
+
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary submit-btn" [disabled]="form.invalid">
+                            LOG IN
+                        </button>
+                    </div>
+
+                    <div class="form-options">
+                        <label class="checkbox-wrap">Remember Me
+                            <input type="checkbox" [checked]="rememberMe" (change)="toggleRememberMe($event)">
+                            <span class="checkmark"></span>
+                        </label>
+                        <a (click)="toggleView()" class="forgot-link">Forgot Password?</a>
+                    </div>
+                </form>
+
+                <ng-template #resetTemplate>
+                    <form [formGroup]="resetForm" (ngSubmit)="requestReset()">
+                        <div class="form-group floating-group">
+                            <input type="email" class="form-control" formControlName="email" required placeholder=" ">
+                            <label class="floating-label">Email Address</label>
+                            <span class="field-icon"><mat-icon>email</mat-icon></span>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary submit-btn" [disabled]="resetForm.invalid">SEND LINK</button>
+                        </div>
+                        <div class="text-center">
+                            <a (click)="toggleView()" class="back-link">&larr; Back to Login</a>
+                        </div>
+                    </form>
+                </ng-template>
+
+                <div class="social-section">
+                    <p class="divider-text">OR CONTINUE WITH</p>
+                    <div class="social-buttons">
+                        <button type="button" class="social-btn google-btn">
+                            <img src="https://img.icons8.com/color/48/google-logo.png" alt="Google" width="24">
+                        </button>
+                        <button type="button" class="social-btn github-btn">
+                            <img src="https://img.icons8.com/ios-glyphs/48/000000/github.png" alt="Github" width="24">
+                        </button>
+                    </div>
                 </div>
-              </div>
-            </form>
-          </ng-template>
 
-          <div class="text-center mt-4" *ngIf="isLoginView">
-             <p class="w-100 text-center register-text">
-                Don't have an account? <a routerLink="/register" class="register-link">Register Now</a>
-             </p>
-          </div>
+                <div class="register-footer" *ngIf="isLoginView">
+                    <p>New to HisabKitab? <a routerLink="/register" class="register-link">Create Account</a></p>
+                </div>
 
+            </div>
         </div>
-      </div>
     </div>
-  </div>
-</section>
+
+    <div class="video-panel">
+        <div class="video-overlay"></div>
+        <video autoplay muted loop playsinline class="bg-video">
+            <source src="assets/video.mp4" type="video/mp4">
+        </video>
+        <div class="video-text">
+            <h2>Manage Wealth.<br>Master Life.</h2>
+        </div>
+    </div>
+
+</div>
