@@ -1,11 +1,12 @@
 package com.abhinav.expense_tracker.service;
 
 import java.nio.file.attribute.UserPrincipal;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.naming.AuthenticationException;
 
-import org.apache.catalina.User;
+import com.abhinav.expense_tracker.entity.AuthProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -14,6 +15,7 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
+import com.abhinav.expense_tracker.entity.User;
 import com.abhinav.expense_tracker.repository.UserRepository;
 
 @Service
@@ -32,39 +34,42 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         String email = "";
         String name = "";
         String providerId = "";
+        String imageUrl = ""; 
 
         if("google".equals(registrationId)){
             email = (String)attributes.get("email");
             name = (String)attributes.get("name");
             providerId = (String)attributes.get("sub");
+            imageUrl = (String)attributes.get("picture");
         }
         else if("github".equals(registrationId)){
             email = (String)attributes.get("email");
             name = (String)attributes.get("name");
-            providerId = (String)attributes.get("id").toString();
+            providerId = String.valueOf(attributes.get("id"));
+            imageUrl = (String)attributes.get("avatar_url");
         }
 
-        User user = saveOrUpdateUser(email,name,providerId,registrationId);
+        if(email == null && "github".equals(registrationId)) {
+             throw new OAuth2AuthenticationException("Email not found from GitHub. Keep email public.");
+        }
 
-        return UserPrincipal.create(user,attributes);
+        User user = saveOrUpdateUser(email,name,providerId,registrationId,imageUrl);
+
+        return UserPrincipal.create(user, attributes);
     }
 
-    private OAuth2User processOAuth2User(OAuth2UserRequest oAuth2UserRequest, OAuth2User oAuth2User){
-        OAuth2UserInfo oAuth2UserInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(
-            oAuth2UserRequest.getClientRegistration().getRegistrationId(),
-            oAuth2User.getAttributes()
-        );
-
-        Optional<User> userOptional = userRepository.findByEmail(oAuth2UserInfo.getEmail());
-        User user;
-        if(userOptional.isPresent()){
-            user = userOptional.get();
-            user = updateExistingUser(user,oAuth2UserInfo);
+    private User saveOrUpdateUser(String email,String name, String providerId,String provider,String imageUrl){
+        User user = userRepository.findByEmail(email).orElse(null);
+        if(user == null){
+            user = new User();
+            user.setEmail(email);
+            user.setUsername(name);
+            user.setProviderId(providerId);
+            user.setAuthProvider(AuthProvider.valueOf(provider.toUpperCase()));
+            user.setEnabled(true);
         }
-        else{
-            user = registerNewUser(oAuth2UserRequest,oAuth2UserInfo);
-        }
-
-        return UserPrincipal.create(user,oAuth2User.getAttributes());
+        user.setUsername(name);
+        user.setProfilePictureURL(imageUrl);
+        return userRepository.save(user);
     }
 }

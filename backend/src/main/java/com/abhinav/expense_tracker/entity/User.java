@@ -151,8 +151,3 @@ public class User {
     
 }
 
-enum AuthProvider{
-    LOCAL,
-    GOOGLE,
-    GITHUB
-}

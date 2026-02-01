@@ -10,6 +10,7 @@ import { CommonModule } from '@angular/common';
 import { debounceTime, distinctUntilChanged, switchMap, of } from 'rxjs';
 import { HostListener } from '@angular/core';
 import confetti from 'canvas-confetti';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-login',
@@ -44,6 +45,8 @@ export class LoginComponent implements OnInit {
   rememberMe = true;
   capsOn = false;
   isLoginError = false;
+
+  private base = `${environment.apiBase}`;
 
   isCheckingUser = false;
   userExists: boolean | null = null;
@@ -94,6 +97,15 @@ export class LoginComponent implements OnInit {
       error: () => this.isCheckingUser = false
     });
   }
+
+  loginWithGoogle(){
+    window.location.href = `${this.base}/oauth2/authorization/google`;
+  }
+
+  loginWithGithub(){
+    window.location.href = `${this.base}/oauth2/authorization/github`;
+  }
+
 
   capitalize(str: string): string {
     if (!str) {
