@@ -1,11 +1,9 @@
 package com.abhinav.expense_tracker.service;
-
-import java.nio.file.attribute.UserPrincipal;
 import java.util.Map;
 import java.util.Optional;
 
 import javax.naming.AuthenticationException;
-
+import com.abhinav.expense_tracker.security.*;
 import com.abhinav.expense_tracker.entity.AuthProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;

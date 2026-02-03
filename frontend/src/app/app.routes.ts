@@ -15,7 +15,7 @@ import { Oauth2HandlerComponent } from './components/oauth2-handler/oauth2-handl
 export const routes: Routes = [
   { path: '', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
-  { path: 'oauth2/redirect',component: Oauth2HandlerComponent }
+  { path: 'oauth2/redirect',component: Oauth2HandlerComponent },
   {
     path:'main',
     component: MainLayoutComponent,

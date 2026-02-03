@@ -105,4 +105,18 @@ export class AuthService{
     checkAvailability(field:string, value:string){
         return this.http.get<{available:boolean}>(`${this.base}/check-availability?field=${field}&value=${value}`);
     }
+
+    saveToken(token:string){
+        localStorage.setItem('token',token);
+        this.getCurrentUser();
+    }
+
+    getCurrentUser(){
+        return this.http.get(`${this.base}/user/me`).pipe(
+            tap((user:any)=>{
+                localStorage.setItem('username',user.username);
+                this.currentUser = user;
+            })
+        )
+    }
 }
