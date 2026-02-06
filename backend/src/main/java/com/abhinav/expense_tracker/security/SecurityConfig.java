@@ -28,7 +28,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
         http.csrf(csrf->csrf.disable())
             .authorizeHttpRequests(auth->auth
-                .requestMatchers("/auth/**","/health","/h2-console/**","/error","/v3/api-docs/**","/swagger-ui/**","/.well-known/**","/favicon.ico","/ws/**,").permitAll()
+                .requestMatchers("/auth/**","/oauth2/**","/health","/h2-console/**","/error","/v3/api-docs/**","/swagger-ui/**","/.well-known/**","/favicon.ico","/ws/**,").permitAll()
                 .anyRequest().authenticated()
             )
             .cors(cors->cors.configurationSource(request->{
@@ -40,6 +40,9 @@ public class SecurityConfig {
                 return corsConfiguration;
             }))
             .oauth2Login(oauth2 -> oauth2
+                .redirectionEndpoint(redirection-> redirection
+                    .baseUri("/oauth2/callback/*")
+                )
                 .userInfoEndpoint(userInfo -> userInfo
                     .userService(customOAuth2UserService)
                 )

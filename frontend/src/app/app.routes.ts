@@ -13,9 +13,11 @@ import { Oauth2HandlerComponent } from './components/oauth2-handler/oauth2-handl
 //import { authGuard } from './services/auth.guard';
 
 export const routes: Routes = [
-  { path: '', component: LoginComponent },
+  { path: 'login', component: LoginComponent },
+  { path: '', redirectTo:'login',pathMatch:'full' },
   { path: 'register', component: RegisterComponent },
   { path: 'oauth2/redirect',component: Oauth2HandlerComponent },
+  { path: 'verify',component:VerifyComponent},
   {
     path:'main',
     component: MainLayoutComponent,
@@ -25,8 +27,7 @@ export const routes: Routes = [
       { path: 'groups', component: GroupComponent },
       { path: 'chat', component: GroupChatComponent },
       { path: 'currency', component: CurrencyConverterComponent },
-      { path: 'settings', component: SettingsComponent },
-      { path: 'verify',component:VerifyComponent}
+      { path: 'settings', component: SettingsComponent }
     ]
   }
   

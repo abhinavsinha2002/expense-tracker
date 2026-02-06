@@ -1,6 +1,7 @@
 package com.abhinav.expense_tracker.util;
 
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
@@ -16,7 +17,10 @@ import com.abhinav.expense_tracker.entity.User;
 public class DtoMapper {
     
     public static UserDto toUserDto(User user){
-        return new UserDto(user.getId(),user.getUsername(),user.getEmail());
+        if(user==null){
+            return null;
+        }
+        return new UserDto(user.getId(),user.getUsername(),user.getFullName(),user.getEmail());
     }
 
     public static GroupResponseDto toGroupDto(ExpenseGroup group){

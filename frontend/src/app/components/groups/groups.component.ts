@@ -73,7 +73,7 @@ export class GroupComponent{
         const groupPayload:Partial<Group> ={
             name:v.name,
             description:v.description,
-            members:members.map(name=>({username:name} as User))
+            //members:members.map(name=>({username:name} as User))
         }
 
         this.svc.create(groupPayload as Group)

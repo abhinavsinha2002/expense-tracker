@@ -30,19 +30,19 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         Map<String,Object> attributes = oAuth2User.getAttributes();
 
         String email = "";
-        String name = "";
+        String fullName = "";
         String providerId = "";
         String imageUrl = ""; 
 
         if("google".equals(registrationId)){
             email = (String)attributes.get("email");
-            name = (String)attributes.get("name");
+            fullName = (String)attributes.get("name");
             providerId = (String)attributes.get("sub");
             imageUrl = (String)attributes.get("picture");
         }
         else if("github".equals(registrationId)){
             email = (String)attributes.get("email");
-            name = (String)attributes.get("name");
+            fullName = (String)attributes.get("name");
             providerId = String.valueOf(attributes.get("id"));
             imageUrl = (String)attributes.get("avatar_url");
         }
@@ -51,23 +51,34 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
              throw new OAuth2AuthenticationException("Email not found from GitHub. Keep email public.");
         }
 
-        User user = saveOrUpdateUser(email,name,providerId,registrationId,imageUrl);
+        User user = saveOrUpdateUser(email,fullName,providerId,registrationId,imageUrl);
 
         return UserPrincipal.create(user, attributes);
     }
 
-    private User saveOrUpdateUser(String email,String name, String providerId,String provider,String imageUrl){
+    private User saveOrUpdateUser(String email,String fullName, String providerId,String provider,String imageUrl){
         User user = userRepository.findByEmail(email).orElse(null);
         if(user == null){
             user = new User();
             user.setEmail(email);
-            user.setUsername(name);
             user.setProviderId(providerId);
             user.setAuthProvider(AuthProvider.valueOf(provider.toUpperCase()));
             user.setEnabled(true);
+            user.setProfilePictureURL(imageUrl);
+            user.setFullName(fullName!=null ? fullName:"User");
+            String baseHandle = email.split("@")[0];
+            String handle = baseHandle;
+            int count = 1;
+            while(userRepository.existsByUsername(handle)){
+                handle = baseHandle + count;
+                count++;
+            }
+            user.setUsername(handle);
         }
-        user.setUsername(name);
-        user.setProfilePictureURL(imageUrl);
+        else{
+            user.setFullName(fullName!=null ? fullName:user.getFullName());
+            user.setProfilePictureURL(imageUrl);
+        }
         return userRepository.save(user);
     }
 }

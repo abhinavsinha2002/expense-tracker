@@ -1,34 +1,183 @@
-.verify-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 80vh; /* Center vertically on screen */
+/* ========================
+   1. Page Layout & Background
+   ======================== */
+.page-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100%;
+    
+    /* BACKGROUND IMAGE (Glass Effect Foundation) */
+    background: url('/assets/verification.jpg') no-repeat center center/cover;
+    position: relative;
+    font-family: 'Poppins', sans-serif;
 }
 
+/* Dark Overlay (Essential for readability over any image) */
+.page-container::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.6); /* Darkens image by 60% */
+    z-index: 1;
+}
+
+/* ========================
+   2. Card Styling (Glassmorphism)
+   ======================== */
 .status-card {
-  padding: 40px;
-  max-width: 400px;
-  width: 100%;
-  text-align: center;
-  border-radius: 20px;
+    position: relative;
+    z-index: 2; /* Sit on top of the overlay */
+    padding: 50px 40px;
+    max-width: 450px;
+    width: 90%;
+    text-align: center;
+    border-radius: 16px;
+    
+    /* The Glass Effect */
+    background: rgba(255, 255, 255, 0.95); /* Mostly opaque white */
+    backdrop-filter: blur(10px); /* Blurs the background image behind it */
+    box-shadow: 0 25px 50px rgba(0,0,0,0.5); 
+    border: 1px solid rgba(255,255,255,0.2);
 }
 
 .state-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
 }
 
-h3 { margin: 0; font-size: 1.5rem; color: #1e293b; }
-p { color: #64748b; margin-bottom: 20px; }
+/* ========================
+   3. Typography
+   ======================== */
+h3 {
+    margin: 15px 0 5px 0;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #1a1a1a;
+}
 
+p {
+    color: #64748b;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin-bottom: 20px;
+}
+
+.success-text { color: #27ae60; }
+.error-text { color: #c0392b; }
+
+/* ========================
+   4. Icons & Circles
+   ======================== */
 .icon-circle {
-  width: 60px; height: 60px; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  margin-bottom: 10px;
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
 }
-.icon-circle mat-icon { font-size: 30px; width: 30px; height: 30px; }
 
-.green { background: #ecfdf5; color: #10b981; }
-.red { background: #fef2f2; color: #ef4444; }
+.icon-circle mat-icon {
+    font-size: 45px;
+    width: 45px;
+    height: 45px;
+}
+
+/* Success Styles */
+.green {
+    background: rgba(39, 174, 96, 0.1);
+    color: #27ae60;
+}
+
+/* Error Styles */
+.red {
+    background: rgba(192, 57, 43, 0.1);
+    color: #c0392b;
+}
+
+/* Loading Styles */
+.spinner-wrapper {
+    margin-bottom: 20px;
+}
+/* Force spinner to be Gold */
+::ng-deep .gold-spinner circle {
+    stroke: #dcb14a !important;
+}
+
+/* ========================
+   5. Countdown & Buttons
+   ======================== */
+.redirect-box {
+    margin-bottom: 25px;
+    background: #f1f5f9;
+    padding: 10px 20px;
+    border-radius: 30px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.timer {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    width: 24px;
+}
+
+.sub-text {
+    font-size: 0.85rem;
+    color: #888;
+}
+
+.action-btn {
+    width: 100%;
+    height: 50px;
+    border-radius: 30px;
+    background: #1a1a1a; /* Black */
+    color: #dcb14a; /* Gold */
+    font-weight: 600;
+    letter-spacing: 1px;
+    transition: 0.3s;
+}
+
+.action-btn:hover {
+    background: #dcb14a;
+    color: #000;
+}
+
+/* ========================
+   6. Animations
+   ======================== */
+.fade-in-up {
+    animation: fadeInUp 0.8s ease-out;
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.pop-in {
+    animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes popIn {
+    0% { transform: scale(0); opacity: 0; }
+    80% { transform: scale(1.1); opacity: 1; }
+    100% { transform: scale(1); }
+}
+
+.shake {
+    animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+    20%, 40%, 60%, 80% { transform: translateX(5px); }
+}

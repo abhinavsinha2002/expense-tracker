@@ -12,6 +12,7 @@ import jakarta.persistence.*;
 public class User {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY) private Long id;
     @Column(nullable = false, unique = true) private String username;
+    @Column(nullable = false) private String fullName;
     @Column(nullable = false, unique = true) private String email;
     @Column(nullable = true) private String password;
     private boolean enabled = false;
@@ -147,6 +148,14 @@ public class User {
 
     public void setAuthProvider(AuthProvider authProvider) {
         this.authProvider = authProvider;
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
     };
     
 }

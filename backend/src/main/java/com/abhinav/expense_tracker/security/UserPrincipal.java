@@ -14,19 +14,21 @@ import com.abhinav.expense_tracker.entity.User;
 public class UserPrincipal implements OAuth2User,UserDetails {
     private Long id;
     private String email;
+    private String fullName;
     private String password;
     private Collection<?extends GrantedAuthority> authorities;
     private Map<String, Object> attributes;
 
-    public UserPrincipal(Long id,String email,String password,Collection<? extends GrantedAuthority> authorities ){
+    public UserPrincipal(Long id,String email,String password,String fullName,Collection<? extends GrantedAuthority> authorities ){
         this.id = id;
         this.email =email;
         this.password = password;
         this.authorities = authorities;
+        this.fullName = fullName;
     }
 
     public static UserPrincipal create(User user){
-        return new UserPrincipal(user.getId(), user.getEmail(), user.getPassword(), Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")));
+        return new UserPrincipal(user.getId(), user.getEmail(), user.getPassword(), user.getFullName(),Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")));
     }
 
     public static UserPrincipal create(User user, Map<String,Object> attributes){
@@ -55,6 +57,10 @@ public class UserPrincipal implements OAuth2User,UserDetails {
 
     @Override
     public String getPassword() { return password; }
+
+    public String getFullName() {
+        return fullName;
+    }
 
     @Override
     public String getUsername() { return email; } // IMPORTANT: We use email as the unique username

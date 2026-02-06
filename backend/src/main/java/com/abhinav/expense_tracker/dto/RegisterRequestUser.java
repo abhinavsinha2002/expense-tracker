@@ -1,8 +1,16 @@
 package com.abhinav.expense_tracker.dto;
 
-public class AuthRequest {
+public class RegisterRequestUser {
+    private String fullName;
     private String email;
     private String password;
+    
+    public String getFullName() {
+        return fullName;
+    }
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
     public String getEmail() {
         return email;
     }
@@ -16,4 +24,5 @@ public class AuthRequest {
         this.password = password;
     }
 
+    
 }

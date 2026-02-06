@@ -14,6 +14,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import com.abhinav.expense_tracker.entity.AuthProvider; // Ensure this is imported
 import com.abhinav.expense_tracker.entity.Category;
 import com.abhinav.expense_tracker.entity.Expense;
 import com.abhinav.expense_tracker.entity.ExpenseGroup;
@@ -43,12 +44,12 @@ public class DataLoader implements CommandLineRunner {
             BCryptPasswordEncoder enc = new BCryptPasswordEncoder();
             String defaultPassword = enc.encode("password");
 
-            // --- 1. Create Users ---
-            User abhinav = createUser("abhinav", "abhinavsinha2002@gmail.com", defaultPassword);
-            User anjalee = createUser("anjalee", "anjalee@gmail.com", defaultPassword);
-            User rohit = createUser("rohit", "rohit@gmail.com", defaultPassword);
-            User neha = createUser("neha", "neha@gmail.com", defaultPassword);
-            User rahul = createUser("rahul", "rahul@gmail.com", defaultPassword);
+            // --- 1. Create Users (Updated with Full Names) ---
+            User abhinav = createUser("Abhinav Sinha", "abhinav", "abhinavsinha2002@gmail.com", defaultPassword);
+            User anjalee = createUser("Anjalee Kumari", "anjalee", "anjalee@gmail.com", defaultPassword);
+            User rohit   = createUser("Rohit Sharma", "rohit", "rohit@gmail.com", defaultPassword);
+            User neha    = createUser("Neha Gupta", "neha", "neha@gmail.com", defaultPassword);
+            User rahul   = createUser("Rahul Verma", "rahul", "rahul@gmail.com", defaultPassword);
 
             List<User> allUsers = Arrays.asList(abhinav, anjalee, rohit, neha, rahul);
 
@@ -77,12 +78,11 @@ public class DataLoader implements CommandLineRunner {
             Random random = new Random();
 
             // A. Create 40 Personal Expenses (No Group)
-            // These verify the "Personal" view in your dashboard
             for (int i = 0; i < 40; i++) {
                 User owner = allUsers.get(random.nextInt(allUsers.size()));
                 Category cat = categories.get(random.nextInt(categories.size()));
-                BigDecimal amount = BigDecimal.valueOf(100 + random.nextInt(900)); // 100 to 1000
-                LocalDate date = LocalDate.now().minusDays(random.nextInt(100)); // Last 100 days
+                BigDecimal amount = BigDecimal.valueOf(100 + random.nextInt(900)); 
+                LocalDate date = LocalDate.now().minusDays(random.nextInt(100));
 
                 createExpense(
                     owner.getUsername() + " Personal " + cat.getName(), 
@@ -91,16 +91,15 @@ public class DataLoader implements CommandLineRunner {
                     owner, 
                     null, // No Group
                     cat, 
-                    null // No Splits (Owner pays all)
+                    null // No Splits
                 );
             }
 
             // B. Create 30 "Flat 101" Expenses (Equal Splits)
-            // These verify standard split logic
             for (int i = 0; i < 30; i++) {
                 User payer = Arrays.asList(abhinav, rohit, rahul).get(random.nextInt(3));
                 Category cat = Arrays.asList(utilities, food).get(random.nextInt(2));
-                BigDecimal totalAmount = BigDecimal.valueOf(300 + random.nextInt(1200)); // 300 to 1500
+                BigDecimal totalAmount = BigDecimal.valueOf(300 + random.nextInt(1200)); 
                 LocalDate date = LocalDate.now().minusDays(random.nextInt(60));
 
                 createExpense(
@@ -114,14 +113,12 @@ public class DataLoader implements CommandLineRunner {
                 );
             }
 
-            // C. Create 20 "Shimla Trip" Expenses (Random/Uneven Splits)
-            // These verify complex split logic (e.g., someone paid more)
+            // C. Create 20 "Shimla Trip" Expenses (Uneven Splits)
             for (int i = 0; i < 20; i++) {
                 User payer = (i % 2 == 0) ? abhinav : anjalee;
                 BigDecimal totalAmount = BigDecimal.valueOf(2000 + random.nextInt(5000));
-                LocalDate date = LocalDate.now().minusDays(100 + random.nextInt(10)); // Old trip
+                LocalDate date = LocalDate.now().minusDays(100 + random.nextInt(10)); 
 
-                // Create uneven split (e.g., 60% - 40%)
                 List<ExpenseSplitData> splits = new ArrayList<>();
                 BigDecimal share1 = totalAmount.multiply(new BigDecimal("0.60"));
                 BigDecimal share2 = totalAmount.subtract(share1);
@@ -140,10 +137,9 @@ public class DataLoader implements CommandLineRunner {
                 );
             }
 
-            // D. Create 10 "Office Lunch" Expenses (One person treats others)
-            // Verifies logic where Payer is NOT in the split (or pays full for others)
+            // D. Create 10 "Office Lunch" Expenses
             for (int i = 0; i < 10; i++) {
-                User payer = neha; // Neha treats everyone
+                User payer = neha; 
                 BigDecimal totalAmount = BigDecimal.valueOf(2500);
                 LocalDate date = LocalDate.now().minusDays(random.nextInt(20));
 
@@ -162,14 +158,17 @@ public class DataLoader implements CommandLineRunner {
         }
     }
 
-    // --- Helper Methods to keep code clean ---
+    // --- Helper Methods ---
 
-    private User createUser(String username, String email, String password) {
+    // UPDATED: Now accepts fullName and sets AuthProvider
+    private User createUser(String fullName, String username, String email, String password) {
         User u = new User();
+        u.setFullName(fullName); // <--- Set the new field
         u.setUsername(username);
         u.setEmail(email);
         u.setPassword(password);
         u.setEnabled(true);
+        u.setAuthProvider(AuthProvider.LOCAL); // <--- Good practice to set this explicitly
         return userRepository.save(u);
     }
 
@@ -204,7 +203,6 @@ public class DataLoader implements CommandLineRunner {
                 e.getSplits().add(s);
             }
         } else {
-            // Default: Owner pays 100% (Personal Expense)
             ExpenseSplit s = new ExpenseSplit();
             s.setMemberIdentifier(owner.getUsername());
             s.setAmount(amount);
@@ -215,21 +213,17 @@ public class DataLoader implements CommandLineRunner {
         expenseRepository.save(e);
     }
 
-    // Generate equal splits for a set of users
     private List<ExpenseSplitData> generateEqualSplits(BigDecimal total, Set<User> members) {
         List<ExpenseSplitData> splits = new ArrayList<>();
         BigDecimal size = BigDecimal.valueOf(members.size());
-        // Simple division, might lose pennies but fine for mock data
         BigDecimal perHead = total.divide(size, 2, BigDecimal.ROUND_FLOOR); 
         
-        // Adjust last person to handle rounding errors
         BigDecimal currentSum = BigDecimal.ZERO;
         int count = 0;
         
         for (User u : members) {
             count++;
             if (count == members.size()) {
-                // Last person gets the remainder
                 BigDecimal remainder = total.subtract(currentSum);
                 splits.add(new ExpenseSplitData(u.getUsername(), remainder));
             } else {
@@ -240,7 +234,6 @@ public class DataLoader implements CommandLineRunner {
         return splits;
     }
 
-    // Simple inner class to hold split data
     private static class ExpenseSplitData {
         String username;
         BigDecimal amount;

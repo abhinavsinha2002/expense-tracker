@@ -20,8 +20,14 @@ export class Oauth2HandlerComponent implements OnInit{
         const error = this.route.snapshot.queryParamMap.get('error');
 
         if(token){
-            this.authService.saveToken(token);
-            this.router.navigate(['/main']);
+            this.authService.saveToken(token).subscribe({
+                next:()=>{
+                    this.router.navigate(['/main']);
+                },
+                error:()=>{
+                    this.router.navigate(['/login'])
+                }
+            });   
         }
         else{
             this.router.navigate(['/login']);

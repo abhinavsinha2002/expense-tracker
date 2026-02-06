@@ -1,84 +1,408 @@
-.register-container {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: linear-gradient(135deg, #f4f6f8 0%, #eef2f3 100%);
+/* =========================================
+   1. IMPORTS & RESETS
+   ========================================= */
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:host {
+    display: block;
+    width: 100%;
+    height: 100vh;
+    font-family: "Poppins", sans-serif;
+    overflow: hidden; 
 }
 
-.register-card {
-    background: white;
-    padding: 2.5rem;
-    border-radius: 15px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+/* =========================================
+   2. SPLIT SCREEN LAYOUT
+   ========================================= */
+.split-container {
+    display: flex;
+    height: 100vh;
     width: 100%;
-    max-width: 450px;
+    background-color: #ffffff; 
+}
+
+/* --- LEFT PANEL (Register Form) --- */
+.register-panel {
+    width: 40%;
+    height: 100%;
+    background: #ffffff;
+    display: flex;
+    flex-direction: column;
+    /* Texture Image */
+    background-image: url("/assets/whie.jfif"); 
+    /* REMOVED: background-size: cover; (This fixes the zoom issue) */
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    padding: 40px;
+    z-index: 2;
+    box-shadow: 10px 0 40px rgba(0,0,0,0.1); 
+}
+
+.content-wrapper {
+    width: 100%;
+    max-width: 420px;
+}
+
+/* --- RIGHT PANEL (Image) --- */
+.image-panel {
+    width: 60%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+.bg-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Ensures image covers the area perfectly */
+    display: block;
+}
+
+.image-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    /* Slightly lighter gradient than video for better image visibility */
+    background: linear-gradient(135deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.6) 100%);
+    z-index: 1;
+}
+
+.image-text {
+    position: absolute;
+    bottom: 60px;
+    left: 60px;
+    z-index: 2;
+    color: #fff;
+}
+
+.image-text h2 {
+    font-size: 3.8rem;
+    font-weight: 700;
+    line-height: 1.1;
+    text-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+/* =========================================
+   3. BRANDING & HEADERS
+   ========================================= */
+.brand-header {
+    text-align: center;
+    margin-bottom: 30px; 
+}
+
+.brand-icon {
+    font-size: 40px;
+    width: 40px;
+    height: 40px;
+    color: #dcb14a; 
+    margin-bottom: 10px;
+}
+
+.brand-header h1 {
+    color: #1a1a1a;
+    font-weight: 700;
+    letter-spacing: 2px;
+    font-size: 2.2rem;
+    margin: 0;
+}
+
+.highlight { color: #dcb14a; }
+
+.subtitle {
+    color: #888;
+    font-size: 0.75rem;
+    letter-spacing: 4px;
+    margin-top: 5px;
+    text-transform: uppercase;
+    font-weight: 500;
+}
+
+.welcome-text {
+    color: #1a1a1a;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 25px;
+    text-align: left;
+}
+
+/* =========================================
+   4. FORM ELEMENTS
+   ========================================= */
+.form-group {
+    position: relative;
+    margin-bottom: 20px;
 }
 
 .form-control {
-    padding: 12px 15px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
     width: 100%;
-    box-sizing: border-box; /* Fixes padding issues */
-    transition: all 0.3s;
+    background: #f4f6f8;
+    border: 1px solid transparent;
+    border-bottom: 2px solid #ddd;
+    color: #333;
+    height: 55px;
+    font-size: 1rem;
+    padding: 20px 10px 5px 15px;
+    transition: all 0.3s ease;
+    border-radius: 8px 8px 0 0;
 }
 
 .form-control:focus {
-    border-color: var(--brand-gold);
-    box-shadow: 0 0 0 3px rgba(230, 126, 34, 0.1);
+    background: #fff;
+    border-bottom-color: #dcb14a;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
     outline: none;
 }
 
-/* Icons for Red/Green Ticks */
-.position-relative { position: relative; }
-.status-icon {
+.floating-label {
     position: absolute;
+    left: 15px;
+    top: 18px;
+    color: #888;
+    font-size: 0.95rem;
+    pointer-events: none;
+    transition: 0.3s ease all;
+}
+
+.form-control:focus ~ .floating-label,
+.form-control:not(:placeholder-shown) ~ .floating-label {
+    top: 6px;
+    font-size: 0.75rem;
+    color: #dcb14a;
+    font-weight: 600;
+}
+
+/* Icons */
+.field-icon {
+    position: absolute;
+    top: 50%;
     right: 15px;
-    top: 38px;
-    font-weight: bold;
+    transform: translateY(-50%);
+    color: #aaa;
+    display: flex;
+    align-items: center;
 }
-.success { color: var(--success); }
-.error { color: var(--danger); }
+.form-control:focus ~ .field-icon { color: #dcb14a; }
+.click-icon { cursor: pointer; }
+.click-icon:hover { color: #333; }
 
-/* Password Checklist Grid */
+/* Status Colors */
+.valid-icon { color: #27ae60 !important; }
+.invalid-icon { color: #c0392b !important; }
+.spin { animation: spin 1s linear infinite; }
+@keyframes spin { 100% { transform: rotate(360deg); } }
+
+.text-danger {
+    color: #e74c3c;
+    font-size: 0.75rem;
+    position: absolute;
+    bottom: -18px;
+    left: 5px;
+}
+
+/* =========================================
+   5. PASSWORD CHECKLIST
+   ========================================= */
 .password-checklist {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-    font-size: 0.85rem;
-    color: #95a5a6;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+    padding: 0 5px;
 }
 
-.password-checklist div {
-    transition: color 0.3s;
+.check-item {
+    font-size: 0.75rem;
+    color: #999;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    transition: all 0.3s ease;
+    background: #d6dad3aa;
+    padding: 4px 10px;
+    border-radius: 20px;
+    border: 1px solid #dedfde;
 }
 
-.password-checklist div.met {
-    color: var(--success);
-    font-weight: 600;
+.check-item.valid {
+    color: #27ae60;
+    background: rgba(39, 174, 96, 0.1);
+    border-color: rgba(39, 174, 96, 0.2);
+    font-weight: 500;
 }
 
-.password-checklist div.met span {
-    content: "✓"; /* Change dot to tick visually if desired */
+.tiny-icon {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.btn-primary {
-    background-color: var(--brand-dark);
-    color: white;
-    padding: 12px;
+/* =========================================
+   6. BUTTONS & FOOTER
+   ========================================= */
+.submit-btn {
+    width: 100%;
+    height: 55px;
+    border-radius: 50px;
     border: none;
-    border-radius: 8px;
+    background: linear-gradient(135deg, #1a1a1a 0%, #333 100%); 
+    color: #dcb14a;
     font-weight: 600;
+    letter-spacing: 1.5px;
+    font-size: 1rem;
+    text-transform: uppercase;
     cursor: pointer;
-    transition: background 0.3s;
+    transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
 }
 
-.btn-primary:hover {
-    background-color: var(--brand-gold);
+.submit-btn:hover:not([disabled]) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+    background: linear-gradient(135deg, #dcb14a 0%, #f4d03f 100%);
+    color: #000;
 }
 
-.btn-primary:disabled {
-    background-color: #bdc3c7;
+.submit-btn:disabled {
+    background: #eee;
+    color: #aaa;
     cursor: not-allowed;
+    box-shadow: none;
+}
+
+/* Social & Footer */
+.social-section {
+    text-align: center;
+    margin-top: 30px;
+}
+
+.divider-text {
+    color: #999;
+    font-size: 0.75rem;
+    letter-spacing: 1px;
+    margin-bottom: 15px;
+    position: relative;
+}
+.divider-text::before, .divider-text::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: 30%;
+    height: 1px;
+    background: #eee;
+}
+.divider-text::before { left: 0; }
+.divider-text::after { right: 0; }
+
+.social-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+.social-btn {
+    width: 45px; height: 45px;
+    border-radius: 50%;
+    border: 1px solid #eee;
+    background: #fff;
+    display: flex; align-items: center; justify-content: center;
+    transition: 0.3s;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.social-btn:hover {
+    border-color: #dcb14a;
+    transform: translateY(-3px);
+}
+
+.register-footer {
+    text-align: center;
+    margin-top: 30px;
+    color: #666;
+    font-size: 0.95rem;
+}
+
+.register-link {
+    color: #dcb14a;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+/* Mobile */
+@media (max-width: 900px) {
+    .split-container { flex-direction: column; height: auto; }
+    .image-panel { display: none; }
+    .register-panel { width: 100%; min-height: 100vh; padding: 30px 20px; }
+}
+
+/* Fade In Animation */
+.fade-in-up {
+    animation: fadeInUp 0.6s ease-out;
+}
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* =========================================
+   PREMIUM SNACKBAR STYLES (Black & Gold)
+   ========================================= */
+
+/* 1. Base Container Override */
+.success-snackbar, .error-snackbar {
+    /* Moves the snackbar slightly up from the very bottom for a 'floating' look */
+    margin-bottom: 20px !important; 
+}
+
+/* 2. The Notification Card (Surface) */
+.success-snackbar .mat-mdc-snack-bar-container .mat-mdc-snack-bar-surface,
+.error-snackbar .mat-mdc-snack-bar-container .mat-mdc-snack-bar-surface {
+    /* Premium Dark Gradient (Matches your Submit Button) */
+    background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%) !important;
+    
+    /* Modern Shape */
+    border-radius: 8px !important;
+    
+    /* Luxury Drop Shadow */
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4) !important;
+    
+    /* Typography */
+    font-family: 'Poppins', sans-serif !important;
+    font-weight: 500;
+    font-size: 0.95rem;
+    color: #ffffff !important; /* White Text for contrast */
+}
+
+/* 3. SUCCESS Variant (Green Accent) */
+.success-snackbar .mat-mdc-snack-bar-container .mat-mdc-snack-bar-surface {
+    /* A bright Green stripe on the left to indicate success */
+    border-left: 4px solid #27ae60 !important; 
+}
+
+/* 4. ERROR Variant (Red Accent) */
+.error-snackbar .mat-mdc-snack-bar-container .mat-mdc-snack-bar-surface {
+    /* A bright Red stripe on the left to indicate error */
+    border-left: 4px solid #c0392b !important; 
+}
+
+/* 5. The "Close" Action Button */
+.success-snackbar .mat-mdc-snack-bar-action, 
+.error-snackbar .mat-mdc-snack-bar-action {
+    /* Your Brand GOLD Color */
+    color: #dcb14a !important; 
+    
+    font-weight: 700 !important;
+    letter-spacing: 1px;
+    cursor: pointer;
+}
+
+/* 6. Text Label Adjustment */
+.mat-mdc-snack-bar-label {
+    /* Ensure text has some breathing room */
+    padding-right: 10px; 
 }

@@ -8,28 +8,29 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { CommonModule } from '@angular/common';
+import { environment } from '../../../environments/environment';
 
 @Component({
-  selector: 'app-register',
-  standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    MatCardModule,
-    MatInputModule,
-    MatButtonModule,
-    MatIconModule,
-    MatSnackBarModule,
-    RouterLink
-  ],
-  templateUrl: './register.component.html',
-  styleUrl: './register.component.css'
+    selector: 'app-register',
+    standalone: true,
+    imports: [
+        CommonModule,
+        FormsModule,
+        MatCardModule,
+        MatInputModule,
+        MatButtonModule,
+        MatIconModule,
+        MatSnackBarModule,
+        MatTooltipModule,
+        RouterLink
+    ],
+    templateUrl: './register.component.html',
+    styleUrl: './register.component.css'
 })
-export class RegisterComponent{
-    user = {username:'',email:'',password:''};
-
-    usernameAvailable: boolean | null = null;
+export class RegisterComponent {
+    user = { email: '', password: '', fullName: '' };
     emailAvailable: boolean | null = null;
 
     isEmailFormatValid = true;
@@ -38,61 +39,80 @@ export class RegisterComponent{
     hasNumber = false;
     hasUpper = false;
     hasSymbol = false;
+    private base = `${environment.apiBase}`;
 
     passwordVisible = false;
 
-    constructor(private auth:AuthService,private router:Router){}
+    constructor(private auth: AuthService, private router: Router, private snackBar: MatSnackBar) { }
 
-    checkUsername(){
-        if(this.user.username.length<3){
-            this.usernameAvailable = null;
+    checkEmail() {
+        this.emailAvailable = null;
+        if(this.user.email.trim().length==0){
+            this.isEmailFormatValid = true;
             return;
         }
-        this.auth.checkAvailability('username',this.user.username).subscribe(res =>{
-            this.usernameAvailable = res.available;
-        })
-    }
-
-    checkEmail(){
-        this.emailAvailable = null;
         const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
         this.isEmailFormatValid = emailRegex.test(this.user.email);
-        if(!this.isEmailFormatValid){
+        if (!this.isEmailFormatValid || this.user.email.length < 5) {
             return;
         }
-        this.auth.checkAvailability('email',this.user.email).subscribe(res=>{
+        this.auth.checkAvailability('email', this.user.email).subscribe(res => {
             this.emailAvailable = res.available;
         })
     }
 
-    checkPassword(){
+    checkPassword() {
         const p = this.user.password;
-        this.hasMinLength = p.length>=6;
+        this.hasMinLength = p.length >= 6;
         this.hasNumber = /\d/.test(p);
         this.hasUpper = /[A-Z]/.test(p);
         this.hasSymbol = /[!@#$%^&*(),.?":{}|<>]/.test(p);
     }
 
-    get isFormValid():boolean{
-        return (this.usernameAvailable === true) &&
-                (this.emailAvailable === true) &&
-                (this.hasMinLength && this.hasNumber && this.hasUpper && this.hasSymbol);
+    get isFormValid(): boolean {
+        return (this.user.fullName.trim().length) > 0 &&
+            (this.isEmailFormatValid) &&
+            (this.emailAvailable === true) &&
+            (this.hasMinLength && this.hasNumber && this.hasUpper && this.hasSymbol);
     }
 
-  register(){
-    if(this.isFormValid){
-        this.auth.register(this.user).subscribe({
-            next:()=>{
-                alert('Registration successful! Please check your email to verify.');
-                this.router.navigate(['/login']);
-            },
-            error:(err)=>alert('Error: '+err.message)
-        });
+    register() {
+        if (this.isFormValid) {
+            this.auth.register(this.user).subscribe({
+                next: () => {
+                    this.showMessages('Registration successful! Please check your email.')
+                    setTimeout(() => {
+                        this.router.navigate(['/login']);
+                    }, 1500);
+                },
+                error: (err) => {
+                    const msg = err.error || err.message || 'Registration failed';
+                    this.showMessages('Error: ' + msg, true);
+                }
+            });
+        }
     }
+
+    loginWithGoogle() {
+        window.location.href = `${this.base}/oauth2/authorization/google`;
+    }
+
+    loginWithGithub() {
+        window.location.href = `${this.base}/oauth2/authorization/github`;
+    }
+
+
+    private showMessages(message: string, isError = false) {
+        this.snackBar.open(message, 'Close', {
+            duration: 3000,
+            horizontalPosition: 'center',
+            verticalPosition: 'top',
+            panelClass: isError ? ['error-snackbar'] : ['success-snackbar']
+        });
     }
 }
 
 
-    
-        
-        
+
+
+

@@ -1,97 +1,99 @@
-<div class="register-container">
-  <div class="register-card fade-in-up">
-    
-    <div class="card-header">
-      <div class="logo-icon">
-        <mat-icon>person_add</mat-icon>
-      </div>
-      <h2>Create Account</h2>
-      <p>Join us to start tracking your finances</p>
-    </div>
-
-    <form (ngSubmit)="register()">
+<div class="split-container">
+  
+  <div class="register-panel">
+    <div class="content-wrapper">
       
-      <mat-form-field appearance="outline" class="custom-field">
-        <mat-label>Username</mat-label>
-        <mat-icon matPrefix>person</mat-icon>
-        
-        <input matInput 
-               name="username" 
-               [(ngModel)]="user.username" 
-               (input)="checkUsername()" 
-               placeholder="Choose a username" 
-               required>
-               
-        <mat-icon *ngIf="usernameAvailable === true" matSuffix class="status-icon success">check_circle</mat-icon>
-        <mat-icon *ngIf="usernameAvailable === false" matSuffix class="status-icon error">cancel</mat-icon>
-        <mat-hint *ngIf="usernameAvailable === false" class="error-text">Username taken</mat-hint>
-      </mat-form-field>
-
-      <mat-form-field appearance="outline" class="custom-field">
-        <mat-label>Email Address</mat-label>
-        <mat-icon matPrefix>email</mat-icon>
-        
-        <input matInput 
-               name="email" 
-               [(ngModel)]="user.email" 
-               (input)="checkEmail()" 
-               placeholder="name@example.com" 
-               required>
-               
-        <mat-icon *ngIf="isEmailFormatValid && emailAvailable === true" matSuffix class="status-icon success">check_circle</mat-icon>
-        
-        <mat-icon *ngIf="!isEmailFormatValid || emailAvailable === false" matSuffix class="status-icon error">cancel</mat-icon>
-
-        <mat-hint *ngIf="!isEmailFormatValid && user.email.length > 0" class="error-text">
-            Invalid email format (e.g. user@domain.com)
-        </mat-hint>
-        
-        <mat-hint *ngIf="isEmailFormatValid && emailAvailable === false" class="error-text">
-            Email already registered
-        </mat-hint>
-      </mat-form-field>
-
-      <mat-form-field appearance="outline" class="custom-field">
-        <mat-label>Password</mat-label>
-        <mat-icon matPrefix>lock</mat-icon>
-        
-        <input matInput 
-               name="password" 
-               [type]="passwordVisible ? 'text' : 'password'" 
-               [(ngModel)]="user.password" 
-               (input)="checkPassword()" 
-               required>
-               
-        <button mat-icon-button matSuffix type="button" (click)="passwordVisible = !passwordVisible">
-          <mat-icon>{{passwordVisible ? 'visibility' : 'visibility_off'}}</mat-icon>
-        </button>
-      </mat-form-field>
-
-      <div class="password-checklist" *ngIf="user.password">
-        <div class="check-item" [class.valid]="hasMinLength">
-          <mat-icon>{{ hasMinLength ? 'check' : 'circle' }}</mat-icon> <span>6+ Characters</span>
-        </div>
-        <div class="check-item" [class.valid]="hasNumber">
-          <mat-icon>{{ hasNumber ? 'check' : 'circle' }}</mat-icon> <span>Number</span>
-        </div>
-        <div class="check-item" [class.valid]="hasUpper">
-          <mat-icon>{{ hasUpper ? 'check' : 'circle' }}</mat-icon> <span>Uppercase</span>
-        </div>
-        <div class="check-item" [class.valid]="hasSymbol">
-          <mat-icon>{{ hasSymbol ? 'check' : 'circle' }}</mat-icon> <span>Symbol</span>
-        </div>
+      <div class="brand-header">
+        <mat-icon class="brand-icon">account_balance_wallet</mat-icon>
+        <h1>HISAB<span class="highlight">KITAB</span></h1>
+        <p class="subtitle">START YOUR JOURNEY</p>
       </div>
 
-      <button mat-flat-button color="primary" class="register-btn" [disabled]="!isFormValid">
-        CREATE ACCOUNT
-      </button>
+      <div class="register-form-container fade-in-up"> 
+        <h3 class="welcome-text">Create Account</h3>
 
-    </form>
+        <form (ngSubmit)="register()">
+          <div class="form-group floating-group">
+            <input type="text" class="form-control" name="fullName" [(ngModel)]="user.fullName" required placeholder=" ">
+            <label class="floating-label">Full Name</label>
+            <span class="field-icon"><mat-icon>person</mat-icon></span>
+          </div>
 
-    <div class="card-footer">
-      <div class="divider"></div>
-      <p>Already have an account? <a routerLink="">Log In</a></p>
+          <div class="form-group floating-group">
+            <input type="email" class="form-control" name="email" [(ngModel)]="user.email" (input)="checkEmail()" required placeholder=" ">
+            <label class="floating-label">Email Address</label>        
+            <span class="field-icon">
+              <mat-icon *ngIf="isEmailFormatValid && emailAvailable === null">email</mat-icon>
+              <mat-icon *ngIf="emailAvailable === null && user.email.length > 3 && isEmailFormatValid" class="spin">sync</mat-icon>
+              <mat-icon *ngIf="isEmailFormatValid && emailAvailable === true" class="valid-icon">check_circle</mat-icon>
+              <mat-icon *ngIf="!isEmailFormatValid || emailAvailable === false" class="invalid-icon" [matTooltip]="!isEmailFormatValid ? 'Invalid Format' : 'Email Taken'">cancel</mat-icon>
+            </span>
+            <small *ngIf="!isEmailFormatValid && user.email.length > 0" class="text-danger">Invalid email format</small>
+            <small *ngIf="emailAvailable === false" class="text-danger">Email already registered</small>
+          </div>
+
+          <div class="form-group floating-group">
+            <input [type]="passwordVisible ? 'text' : 'password'" class="form-control" name="password" 
+                   [(ngModel)]="user.password" 
+                   (input)="checkPassword()" 
+                   required placeholder=" ">
+            <label class="floating-label">Password</label>
+            
+            <span class="field-icon click-icon" (click)="passwordVisible = !passwordVisible">
+              <mat-icon>{{ passwordVisible ? 'visibility' : 'visibility_off' }}</mat-icon>
+            </span>
+          </div>
+
+          <div class="password-checklist" *ngIf="user.password">
+            <div class="check-item" [class.valid]="hasMinLength">
+              <mat-icon class="tiny-icon">{{ hasMinLength ? 'check' : 'circle' }}</mat-icon> <span>6+ Chars</span>
+            </div>
+            <div class="check-item" [class.valid]="hasNumber">
+              <mat-icon class="tiny-icon">{{ hasNumber ? 'check' : 'circle' }}</mat-icon> <span>Number</span>
+            </div>
+            <div class="check-item" [class.valid]="hasUpper">
+              <mat-icon class="tiny-icon">{{ hasUpper ? 'check' : 'circle' }}</mat-icon> <span>Upper</span>
+            </div>
+            <div class="check-item" [class.valid]="hasSymbol">
+              <mat-icon class="tiny-icon">{{ hasSymbol ? 'check' : 'circle' }}</mat-icon> <span>Symbol</span>
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-top: 20px;">
+            <button type="submit" class="btn btn-primary submit-btn" [disabled]="!isFormValid">
+              CREATE ACCOUNT
+            </button>
+          </div>
+
+        </form>
+
+        <div class="social-section">
+          <p class="divider-text">OR SIGN UP WITH</p>
+          <div class="social-buttons">
+            <button type="button" class="social-btn google-btn" (click)="loginWithGoogle()">
+              <img src="https://img.icons8.com/color/48/google-logo.png" alt="Google" width="24">
+            </button>
+            <button type="button" class="social-btn github-btn" (click)="loginWithGithub()">
+              <img src="https://img.icons8.com/ios-glyphs/48/000000/github.png" alt="Github" width="24">
+            </button>
+          </div>
+        </div>
+
+        <div class="register-footer">
+          <p>Already have an account? <a routerLink="/login" class="register-link">Log In</a></p>
+        </div>
+
+      </div>
     </div>
-
   </div>
+
+<div class="image-panel">
+    <div class="image-overlay"></div>
+    <img src="assets/final.jpg" alt="Background" class="bg-image">
+    
+    <div class="image-text">
+      <h2>Join the<br>Revolution.</h2>
+    </div>
+  </div>
+
 </div>

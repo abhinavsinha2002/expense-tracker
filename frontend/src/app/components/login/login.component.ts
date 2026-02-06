@@ -8,7 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar'; // Import SnackBar
 import { CommonModule } from '@angular/common';
 import { debounceTime, distinctUntilChanged, switchMap, of } from 'rxjs';
-import { HostListener } from '@angular/core';
+import { ChangeDetectorRef } from '@angular/core';
 import confetti from 'canvas-confetti';
 import { environment } from '../../../environments/environment';
 
@@ -33,14 +33,6 @@ export class LoginComponent implements OnInit {
   isLoginView = true;
   welcomeName: string | null = null;
 
-  errorMessages = [
-    "Ouch! That password hurt.",
-    "Access Denied, Captain.",
-    "Nice try, but no.",
-    "Wrong keys! Try again?",
-    "That's not the secret code."
-  ];
-
   hidePassword = true;
   rememberMe = true;
   capsOn = false;
@@ -51,9 +43,9 @@ export class LoginComponent implements OnInit {
   isCheckingUser = false;
   userExists: boolean | null = null;
 
-  constructor(private fb: FormBuilder, private auth: AuthService, private router: Router, private snackBar: MatSnackBar) {
+  constructor(private fb: FormBuilder, private auth: AuthService, private router: Router, private snackBar: MatSnackBar,private cdr: ChangeDetectorRef) {
     this.form = this.fb.group({
-      username: ['', Validators.required],
+      email: ['', [Validators.required,Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]]
     });
 
@@ -66,20 +58,20 @@ export class LoginComponent implements OnInit {
     this.capsOn = event.getModifierState && event.getModifierState('CapsLock');
   }
   ngOnInit() {
-    this.setupLiveUsernameCheck();
+    this.setupLiveEmailCheck();
   }
 
-  setupLiveUsernameCheck() {
-    this.form.get('username')?.valueChanges.pipe(
+  setupLiveEmailCheck() {
+    this.form.get('email')?.valueChanges.pipe(
       debounceTime(300),
       distinctUntilChanged(),
-      switchMap(username => {
-        if (!username || username.length < 3) {
+      switchMap(emailValue => {
+        if (!emailValue || emailValue.length < 5 || !emailValue.includes('@')) {
           this.userExists = null;
           return of(null);
         }
         this.isCheckingUser = true;
-        return this.auth.checkAvailability('username', username);
+        return this.auth.checkAvailability('email', emailValue);
       })
     ).subscribe({
       next: (res: any) => {
@@ -87,7 +79,9 @@ export class LoginComponent implements OnInit {
         if (res) {
           this.userExists = !res.available;
           if (this.userExists) {
-            this.welcomeName = this.capitalize(this.form.get('username')?.value);
+            const email = this.form.get('email')?.value;
+            const namePart = email.split('@')[0];
+            this.welcomeName = this.capitalize(namePart);
           }
           else {
             this.welcomeName = null;
@@ -132,17 +126,18 @@ export class LoginComponent implements OnInit {
       return;
     }
     const v = this.form.value;
-    this.auth.login(v.username, v.password, this.rememberMe).subscribe({
+    this.auth.login(v.email, v.password, this.rememberMe).subscribe({
       next: () => {
         this.triggerConfetti();
 
         // --- 2. DELAY NAVIGATION SLIGHTLY TO SHOW ANIMATION ---
         setTimeout(() => {
           this.router.navigate(['/main/']);
-          this.showMessages(`Let's manage some money, ${v.username}!`);
+          this.showMessages(`Let's manage some money, ${this.welcomeName}!`);
         }, 1000);
       },
-      error: () =>{
+      error: (err) =>{
+        this.showMessages(err.error,true);
         this.triggerCrashEffect();
       }
     });
@@ -150,9 +145,6 @@ export class LoginComponent implements OnInit {
 
   triggerCrashEffect(){
     this.isLoginError = true;
-    const randomMsg = this.errorMessages[Math.floor(Math.random()*this.errorMessages.length)];
-    this.showMessages(randomMsg, true);
-
     setTimeout(() => {
       this.isLoginError = false;
     }, 500);
@@ -194,15 +186,26 @@ export class LoginComponent implements OnInit {
 
   requestReset() {
     if (this.resetForm.invalid) {
+      this.resetForm.markAllAsTouched();
       return;
     }
-    const email = this.resetForm.value.email;
+    this.resetForm.disable();
+    const email = this.resetForm.get('email')?.value;
     this.auth.requestPasswordReset(email).subscribe({
-      next: () => {
-        this.showMessages('Reset link sent to your email!');
-        this.toggleView();
+      next: (res:any) => {
+        this.resetForm.enable();
+        const msg = (res.message) || 'Reset link sent if account exists.';
+        this.showMessages(msg);
+
+        setTimeout(() => {
+            this.isLoginView = true; 
+            this.cdr.detectChanges(); 
+            }, 3000);
       },
-      error: () => this.showMessages('Error sending email.', true)
+      error: (err) =>{
+        this.resetForm.enable();
+        this.showMessages('Error sending email.', true)
+      } 
     })
   }
 

@@ -18,16 +18,13 @@
                 <form [formGroup]="form" (ngSubmit)="login()" *ngIf="isLoginView; else resetTemplate">
 
                     <div class="form-group floating-group">
-                        <input type="text" class="form-control" formControlName="username" required placeholder=" ">
-                        <label class="floating-label">Username</label>
+                        <input type="email" class="form-control" formControlName="email" required placeholder=" ">
+                        <label class="floating-label">Email Address</label>
                         
                         <span class="field-icon">
-                            <mat-icon *ngIf="!isCheckingUser && userExists === null">person</mat-icon>
-                            
+                            <mat-icon *ngIf="!isCheckingUser && userExists === null">email</mat-icon>
                             <mat-icon *ngIf="isCheckingUser" class="spin">sync</mat-icon>
-                            
                             <mat-icon *ngIf="!isCheckingUser && userExists === true" class="valid-user">check_circle</mat-icon>
-                            
                             <mat-icon *ngIf="!isCheckingUser && userExists === false" class="invalid-user" matTooltip="User not found">cancel</mat-icon>
                         </span>
                         
@@ -69,6 +66,13 @@
                             <label class="floating-label">Email Address</label>
                             <span class="field-icon"><mat-icon>email</mat-icon></span>
                         </div>
+                        
+                        <div style="height: 20px; margin-bottom: 10px;">
+                             <small *ngIf="resetForm.get('email')?.invalid && resetForm.get('email')?.touched" class="text-danger">
+                                Please enter a valid email.
+                            </small>
+                        </div>
+
                         <div class="form-group">
                             <button type="submit" class="btn btn-primary submit-btn" [disabled]="resetForm.invalid">SEND LINK</button>
                         </div>

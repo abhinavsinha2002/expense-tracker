@@ -1,8 +1,9 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import { environment } from '../../environments/environment';
-import { tap } from 'rxjs/operators';
+import { tap, switchMap } from 'rxjs/operators';
 import { User } from '../models/user';
+import { Observable, of } from 'rxjs';
 
 interface AuthResponse{
     token: string;
@@ -11,17 +12,20 @@ interface AuthResponse{
 @Injectable({ providedIn: 'root' })
 export class AuthService{
     private base = `${environment.apiBase}/auth`;
-    currentUser:any=null;
-    constructor(private http:HttpClient){
-        const storedToken = this.getToken();
-        const storedName = this.getUsername();
+    currentUser:User | null =null;
 
-        if (storedToken && storedName) {
+    constructor(private http:HttpClient){
+        
+        let savedUser = localStorage.getItem('user_data');
+        if(!savedUser){
+            savedUser = sessionStorage.getItem('user_data');
+        }
+
+        const storedToken = this.getToken();
+
+        if (storedToken && savedUser) {
             // Re-create the user object so the UI stays logged in
-            this.currentUser = { 
-                name: storedName, 
-                role: 'User' // You can default this or save role in localStorage too
-            };
+            this.currentUser = JSON.parse(savedUser);
         }
     }
 
@@ -29,49 +33,55 @@ export class AuthService{
         return sessionStorage.getItem('token') || localStorage.getItem('token');
     }
 
-    getUsername():string | null{
-        return sessionStorage.getItem('username') || localStorage.getItem('username');
-    }
-
     register(user:User){
         return this.http.post(`${this.base}/register`,user,{
             responseType: 'text'
         });
     }
-    login(username:string,password:string,rememberMe:boolean){
-        return this.http.post<AuthResponse>(`${this.base}/login`,{username,password})
+    login(email:string,password:string,rememberMe:boolean) : Observable<User | null>{
+        return this.http.post<AuthResponse>(`${this.base}/login`,{email,password})
             .pipe(
-                tap(res=>{
+                switchMap(res=>{
                     if(res.token){
-                        this.logout();
                         if(rememberMe){
                             localStorage.setItem('token',res.token);
-                            localStorage.setItem('username',username);
+                            sessionStorage.removeItem('token');
                         }
                         else{
                             sessionStorage.setItem('token',res.token);
-                            sessionStorage.setItem('username',username);
-
+                            localStorage.removeItem('token');
                         }
-                        
-
-                        // --- FIX 2: SET USER IMMEDIATELY ON LOGIN ---
-                        // This updates the variable so the Sidebar changes instantly
-                        this.currentUser = { 
-                            name: username, 
-                            role: 'User'
-                        }
+                        return this.getCurrentUser();
                     }
+                    return of(null);
                 })
-            );
+            )
+    }
+
+    saveToken(token:string){
+        localStorage.setItem('token',token);
+        sessionStorage.removeItem('token');
+        return this.getCurrentUser();
     }
 
     logout(){
         localStorage.removeItem('token');
-        localStorage.removeItem('username');
+        localStorage.removeItem('user_data');
         sessionStorage.removeItem('token');
-        sessionStorage.removeItem('username');
+        sessionStorage.removeItem('user_data');
         this.currentUser = null;
+    }
+
+    private setSession(token:string,rememberMe:boolean){
+        localStorage.removeItem('token');
+        sessionStorage.removeItem('token');
+
+        if(rememberMe){
+            localStorage.setItem('token',token);
+        }
+        else{
+            sessionStorage.setItem('token',token);
+        }
     }
 
     isLoggedIn():boolean{
@@ -106,16 +116,19 @@ export class AuthService{
         return this.http.get<{available:boolean}>(`${this.base}/check-availability?field=${field}&value=${value}`);
     }
 
-    saveToken(token:string){
-        localStorage.setItem('token',token);
-        this.getCurrentUser();
-    }
-
     getCurrentUser(){
-        return this.http.get(`${this.base}/user/me`).pipe(
-            tap((user:any)=>{
-                localStorage.setItem('username',user.username);
+        return this.http.get<User>(`${this.base}/user/me`).pipe(
+            tap((user)=>{
                 this.currentUser = user;
+
+                if(localStorage.getItem('token')){
+                    localStorage.setItem('user_data',JSON.stringify(user));
+                    sessionStorage.removeItem('user_data');
+                }
+                else{
+                    sessionStorage.setItem('user_data',JSON.stringify(user));
+                    localStorage.removeItem('user_data');
+                }
             })
         )
     }

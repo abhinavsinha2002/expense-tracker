@@ -18,6 +18,8 @@ import { AuthService } from '../../services/auth.service';
 export class VerifyComponent implements OnInit{
     status: 'loading' | 'success' | 'error' = 'loading';
     message = 'Verifying your account...';
+    countdown = 3;
+    private timer: any;
 
     constructor(
         private route : ActivatedRoute,
@@ -28,35 +30,61 @@ export class VerifyComponent implements OnInit{
 
     ngOnInit(){
         const token = this.route.snapshot.queryParamMap.get('token');
-        console.log('Verify Component Init. Token:', token);
 
         if(!token){
-            this.status = 'error';
-            this.message = 'Invalid verification link.';
+            this.handleError('Invalid verification link');
             return;
         }
 
-        this.auth.verifyAccount(token).subscribe({
-            next:(response)=>{
-                console.log('Success Response:', response); // DEBUG LOG 2
-                this.status = 'success';
-                this.message = 'Account verified successfully!';
-                this.cdr.detectChanges();
-            },
-            error:(err)=>{
-                console.error('Error occurred:', err); // DEBUG LOG 3
-                this.status = 'error';
-                this.message = typeof err.error === 'string' 
-                    ? err.error 
-                    : 'Verification failed. The link may be expired.';
+        setTimeout(() => {
+            this.auth.verifyAccount(token).subscribe({
+                next: (response) => {
+                    this.status = 'success';
+                    this.message = 'Your email has been successfully verified.';
+                    this.startRedirectTimer();
+                    this.cdr.detectChanges();
+                },
+                error: (err) => {
+                    const msg = typeof err.error === 'string' 
+                        ? err.error 
+                        : 'Verification link expired or invalid.';
+                    this.handleError(msg);
+                }
+            });
+        }, 1000);
+          
+    }
 
-                this.cdr.detectChanges();
+    private handleError(msg: string) {
+        this.status = 'error';
+        this.message = msg;
+        this.startRedirectTimer(); // We redirect even on error, so they can try logging in or requesting again
+        this.cdr.detectChanges();
+    }
+
+    startRedirectTimer() {
+        this.timer = setInterval(() => {
+            this.countdown--;
+            if (this.countdown === 0) {
+                this.stopTimer();
+                this.goToLogin();
             }
-        });
+            this.cdr.detectChanges();
+        }, 1000);
+    }
+
+    stopTimer() {
+        if (this.timer) {
+            clearInterval(this.timer);
+        }
     }
 
     goToLogin(){
         this.router.navigate(['/login']);
+    }
+
+    ngOnDestroy() {
+        this.stopTimer();
     }
 
     
