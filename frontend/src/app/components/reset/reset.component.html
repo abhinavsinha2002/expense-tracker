@@ -1,0 +1,91 @@
+<div class="page-container">
+  
+  <mat-card class="status-card fade-in-up">
+
+    <div *ngIf="status === 'form'" class="state-content">
+      <div class="icon-circle gold-icon">
+        <mat-icon>lock_reset</mat-icon>
+      </div>
+      
+      <h3>Reset Password</h3>
+      <p>Enter your new password below.</p>
+
+      <form [formGroup]="resetForm" (ngSubmit)="onSubmit()" style="width: 100%;">
+        
+        <div class="form-group floating-group">
+            <input [type]="hidePassword ? 'password' : 'text'" 
+                   class="form-control" 
+                   formControlName="password" 
+                   required 
+                   placeholder=" ">
+            <label class="floating-label">New Password</label>
+            
+            <span class="field-icon click-icon" (click)="togglePasswordVisibility()">
+                <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+            </span>
+        </div>
+
+        <div class="password-checklist">
+            <div class="check-item" [class.valid]="hasMinLength">
+              <mat-icon class="tiny-icon">{{ hasMinLength ? 'check' : 'circle' }}</mat-icon> <span>6+ Chars</span>
+            </div>
+            <div class="check-item" [class.valid]="hasNumber">
+              <mat-icon class="tiny-icon">{{ hasNumber ? 'check' : 'circle' }}</mat-icon> <span>Number</span>
+            </div>
+            <div class="check-item" [class.valid]="hasUpper">
+              <mat-icon class="tiny-icon">{{ hasUpper ? 'check' : 'circle' }}</mat-icon> <span>Upper</span>
+            </div>
+            <div class="check-item" [class.valid]="hasSymbol">
+              <mat-icon class="tiny-icon">{{ hasSymbol ? 'check' : 'circle' }}</mat-icon> <span>Symbol</span>
+            </div>
+        </div>
+
+        <button mat-flat-button class="action-btn" [disabled]="!isPasswordValid">
+            Change Password
+        </button>
+
+      </form>
+    </div>
+
+    <div *ngIf="status === 'loading'" class="state-content">
+      <div class="spinner-wrapper">
+        <mat-spinner diameter="60" class="gold-spinner"></mat-spinner>
+      </div>
+      <h3>Updating...</h3>
+      <p>Securing your new credentials.</p>
+    </div>
+
+    <div *ngIf="status === 'success'" class="state-content">
+      <div class="icon-circle green pop-in">
+        <mat-icon>check_circle</mat-icon>
+      </div>
+      
+      <h3 class="success-text">Success!</h3>
+      <p>{{ message }}</p>
+      
+      <div class="redirect-box">
+        <span class="timer">{{ countdown }}</span>
+        <span class="sub-text">Redirecting to Login...</span>
+      </div>
+
+      <button mat-flat-button class="action-btn" (click)="goToLogin()">
+        Login Now
+      </button>
+    </div>
+
+    <div *ngIf="status === 'error'" class="state-content">
+      <div class="icon-circle red shake">
+        <mat-icon>error_outline</mat-icon>
+      </div>
+      
+      <h3 class="error-text">Reset Failed</h3>
+      <p>{{ message }}</p>
+
+      <button mat-stroked-button color="warn" (click)="goToLogin()">
+        Back to Login
+      </button>
+    </div>
+
+  </mat-card>
+
+</div>

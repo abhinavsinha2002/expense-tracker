@@ -10,6 +10,7 @@ import { SettingsComponent } from './components/settings/settings.component';
 import { VerifyComponent } from './components/verify/verify.component'
 import { MainLayoutComponent } from './components/main-layout/main-layout.component';
 import { Oauth2HandlerComponent } from './components/oauth2-handler/oauth2-handler.component';
+import { ResetComponent } from './components/reset/reset.component';
 //import { authGuard } from './services/auth.guard';
 
 export const routes: Routes = [
@@ -18,6 +19,7 @@ export const routes: Routes = [
   { path: 'register', component: RegisterComponent },
   { path: 'oauth2/redirect',component: Oauth2HandlerComponent },
   { path: 'verify',component:VerifyComponent},
+  { path: 'reset', component: ResetComponent},
   {
     path:'main',
     component: MainLayoutComponent,

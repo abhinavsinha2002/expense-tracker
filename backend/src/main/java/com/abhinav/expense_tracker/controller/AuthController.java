@@ -87,8 +87,14 @@ public class AuthController {
 
     @PostMapping("/reset/confirm")
     public ResponseEntity<String> resetConfirm(@RequestParam String token,@RequestParam String newPassword){
-        authService.resetPassword(token, newPassword);
-        return ResponseEntity.ok("Password changed");
+        String result = authService.resetPassword(token, newPassword);
+        if("SUCCESS".equals(result)){
+            return ResponseEntity.ok("Password changed");
+        }
+        else{
+            return ResponseEntity.badRequest().body(result);
+        }
+        
     }
     
     @GetMapping("/check-availability")
@@ -118,6 +124,12 @@ public class AuthController {
         String email = userPrincipal.getUsername();
         User user = userRepository.findByEmail(email).orElseThrow(()->new RuntimeException("User not found"));
         return ResponseEntity.ok(DtoMapper.toUserDto(user));
+    }
+
+    @GetMapping("/reset/validate")
+    public ResponseEntity<Boolean> validateResetToken(@RequestParam String token){
+        boolean isValid = authService.validatePasswordResetToken(token);
+        return ResponseEntity.ok(isValid);
     }
 
 }

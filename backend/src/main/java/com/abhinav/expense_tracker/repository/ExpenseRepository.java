@@ -15,13 +15,13 @@ public interface ExpenseRepository extends JpaRepository<Expense,Long> {
     List<Expense> findByGroup(ExpenseGroup group);
 
     @Query("SELECT DISTINCT e FROM Expense e LEFT JOIN e.splits s " +
-           "WHERE e.owner.username = :username OR s.memberIdentifier = :username")
-    List<Expense> findByUserInvolvement(@Param("username") String username);
+           "WHERE e.owner.email = :email OR s.memberIdentifier = :email")
+    List<Expense> findByUserInvolvement(@Param("email") String email);
 
     @Query("SELECT DISTINCT e FROM Expense e LEFT JOIN e.splits s " +
            "WHERE (e.date BETWEEN :start AND :end) " +
-           "AND (e.owner.username = :username OR s.memberIdentifier = :username)")
+           "AND (e.owner.email = :email OR s.memberIdentifier = :email)")
     List<Expense> findByUserInvolvementAndDateBetween(@Param("start") LocalDate start, 
                                                       @Param("end") LocalDate end, 
-                                                      @Param("username") String username);
+                                                      @Param("email") String email);
 }

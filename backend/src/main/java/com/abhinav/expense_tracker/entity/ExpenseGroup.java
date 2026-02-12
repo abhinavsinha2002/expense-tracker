@@ -24,7 +24,7 @@ public class ExpenseGroup {
     @Column(unique = true)
     private String inviteToken;
 
-    private String currency;
+    private String currency = "INR";
 
     @OneToMany(mappedBy = "group", cascade = CascadeType.ALL)
     @JsonIgnore // Prevent infinite loops! (See explanation below)

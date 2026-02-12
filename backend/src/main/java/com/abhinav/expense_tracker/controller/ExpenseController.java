@@ -1,20 +1,23 @@
 package com.abhinav.expense_tracker.controller;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.catalina.connector.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.abhinav.expense_tracker.dto.ExpenseDto;
@@ -35,6 +38,13 @@ public class ExpenseController {
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody ExpenseDto dto, Authentication auth){
+        Expense e = expenseService.updateExpense(id,dto,auth.getName());
+        ExpenseResponseDto responseDto = DtoMapper.toExpenseDto(e);
+        return ResponseEntity.ok(responseDto);
+    }
+
     @GetMapping
     public ResponseEntity<List<ExpenseResponseDto>> myExpenses(Authentication auth){
         List<Expense> expenses = expenseService.getExpensesForUser(auth.getName());
@@ -48,9 +58,12 @@ public class ExpenseController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/summary/year/{year}")
-    public ResponseEntity<Map<String,Object>> yearlySummary(@PathVariable int year, Authentication auth){
-        return ResponseEntity.ok(expenseService.yearlySummary(year, auth.getName()));
+    @GetMapping("/analytics")
+    public ResponseEntity<Map<String,Object>> getAnalytics(@RequestParam("start") String startDate, @RequestParam("end") String endDate, Authentication auth){
+        LocalDate start  = LocalDate.parse(startDate);
+        LocalDate end = LocalDate.parse(endDate);
+
+        return ResponseEntity.ok(expenseService.getAnalytics(start, end, auth.getName()));
     }
 
     //@GetMapping("/all")

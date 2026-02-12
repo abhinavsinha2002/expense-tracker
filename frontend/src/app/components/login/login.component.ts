@@ -41,6 +41,7 @@ export class LoginComponent implements OnInit {
   private base = `${environment.apiBase}`;
 
   isCheckingUser = false;
+  isLoading = false;
   userExists: boolean | null = null;
 
   constructor(private fb: FormBuilder, private auth: AuthService, private router: Router, private snackBar: MatSnackBar,private cdr: ChangeDetectorRef) {
@@ -189,11 +190,15 @@ export class LoginComponent implements OnInit {
       this.resetForm.markAllAsTouched();
       return;
     }
+    this.isLoading = true;
     this.resetForm.disable();
     const email = this.resetForm.get('email')?.value;
     this.auth.requestPasswordReset(email).subscribe({
       next: (res:any) => {
+        this.isLoading = false;
         this.resetForm.enable();
+        this.resetForm.reset();
+        this.resetForm.get('email')?.setErrors(null);
         const msg = (res.message) || 'Reset link sent if account exists.';
         this.showMessages(msg);
 
@@ -203,6 +208,7 @@ export class LoginComponent implements OnInit {
             }, 3000);
       },
       error: (err) =>{
+        this.isLoading = false;
         this.resetForm.enable();
         this.showMessages('Error sending email.', true)
       } 

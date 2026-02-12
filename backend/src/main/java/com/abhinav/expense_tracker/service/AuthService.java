@@ -123,15 +123,24 @@ public class AuthService {
         emailService.sendPasswordResetEmail(u.getEmail(), u.getFullName(), link);
     }
 
-    public void resetPassword(String token, String newPassword) {
+    public String resetPassword(String token, String newPassword) {
         PasswordResetToken pr = passwordResetTokenRepository.findByToken(token);
         if (pr == null || pr.getExpiryDate().before(new Date())) {
-            throw new IllegalArgumentException("Invalid token");
+            return "Invalid or expired reset link";
         }
         User u = pr.getUser();
+        if(passwordEncoder.matches(newPassword, u.getPassword())){
+            return "Please enter a password different than your current one";
+        }
         u.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(u);
         passwordResetTokenRepository.delete(pr);
+        return "SUCCESS";
+    }
+
+    public boolean validatePasswordResetToken(String token){
+        PasswordResetToken pr= passwordResetTokenRepository.findByToken(token);
+        return pr !=null && !pr.getExpiryDate().before(new Date());
     }
 
 }

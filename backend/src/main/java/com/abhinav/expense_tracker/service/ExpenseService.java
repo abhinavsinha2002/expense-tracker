@@ -31,6 +31,7 @@ public class ExpenseService {
     @Autowired private UserRepository userRepository;
     @Autowired private CategoryRepository categoryRepository;
     @Autowired private GroupRepository groupRepository;
+    @Autowired private GroupActivityService activityService;
 
     @Transactional
     public Expense createExpenseFromDto(ExpenseDto dto,String ownerUsername){
@@ -49,7 +50,78 @@ public class ExpenseService {
             e.setGroup(g);
         }
 
-        if(dto.getSplits()!=null && !dto.getSplits().isEmpty()){
+        handleSplits(e,dto,owner);
+
+        Expense saved = expenseRepository.save(e);
+
+        if(saved.getGroup()!=null){
+            activityService.logExpenseAdded(owner,saved.getGroup(),saved);
+        }
+
+        return saved;
+
+        ////
+
+        ////
+    }
+
+    @Transactional
+    public Expense updateExpense(Long id, ExpenseDto dto, String email){
+        Expense existing = expenseRepository.findById(id).orElseThrow(()->new IllegalArgumentException("Expense not found"));
+        User actor = userRepository.findByEmail(email).orElseThrow(()->new IllegalArgumentException("User not found"));
+
+        if(!existing.getOwner().getEmail().equals(email)){
+            throw new IllegalArgumentException("Only owner can edit");
+        }
+
+        Expense oldSnapshot = new Expense();
+        oldSnapshot.setDescription(existing.getDescription());
+        oldSnapshot.setAmount(existing.getAmount());
+
+        existing.setDescription(dto.getDescription());
+        existing.setAmount(dto.getAmount());
+        if(dto.getDate()!=null){
+            existing.setDate(dto.getDate());
+        }
+        if(dto.getCategory()!=null){
+            Category c = categoryRepository.findByName(dto.getCategory()).orElseGet(()->categoryRepository.save(new Category(dto.getCategory())));
+            existing.setCategory(c);
+        }
+
+        if(dto.getSplits() != null) {
+            existing.getSplits().clear();
+            handleSplits(existing, dto, existing.getOwner());
+        }
+
+        Expense saved = expenseRepository.save(existing);
+        if(saved.getGroup()!=null){
+            activityService.logExpenseUpdated(actor, saved.getGroup(), oldSnapshot, saved);
+        }
+
+        return saved;
+    }
+
+    public List<Expense> getExpensesForUser(String username){
+        User u=userRepository.findByUsername(username).orElseThrow(()->new IllegalArgumentException("User not found"));
+        return expenseRepository.findByUserInvolvement(u.getUsername());
+    }
+
+    public void deleteExpense(Long id,String email){
+        Expense e=expenseRepository.findById(id).orElseThrow(()->new IllegalArgumentException("Not found"));
+        User actor = userRepository.findByEmail(email).orElseThrow(()->new IllegalArgumentException("User not found"));
+        
+        if(!e.getOwner().getEmail().equals(email)){
+            throw new IllegalArgumentException("Only owner can delete");
+        }
+
+        if(e.getGroup()!=null){
+            activityService.logExpenseDeleted(actor, e.getGroup(), e);
+        }
+        expenseRepository.delete(e);
+    }
+
+    private void handleSplits(Expense e, ExpenseDto dto, User owner){
+         if(dto.getSplits()!=null && !dto.getSplits().isEmpty()){
             BigDecimal sum=dto.getSplits().stream().map(ExpenseSplitDto::getAmount).reduce(BigDecimal.ZERO,BigDecimal::add);
             if(sum.compareTo(dto.getAmount())!=0){
                 throw new IllegalArgumentException("Splits don't sum to total");
@@ -84,41 +156,31 @@ public class ExpenseService {
                 e.getSplits().add(s);
             }
         }
-        return expenseRepository.save(e);
     }
 
-    public List<Expense> getExpensesForUser(String username){
-        User u=userRepository.findByUsername(username).orElseThrow(()->new IllegalArgumentException("User not found"));
-        return expenseRepository.findByUserInvolvement(u.getUsername());
-    }
-
-    public void deleteExpense(Long id,String username){
-        Expense e=expenseRepository.findById(id).orElseThrow(()->new IllegalArgumentException("Not found"));
-        if(!e.getOwner().getUsername().equals(username)){
-            throw new IllegalArgumentException("Only owner can delete");
-        }
-        expenseRepository.delete(e);
-    }
-
-    public Map<String,Object> yearlySummary(int year,String username){
-        LocalDate start=LocalDate.of(year,1,1);
-        LocalDate end=LocalDate.of(year,12,31);
-        List<Expense> all = expenseRepository.findByUserInvolvementAndDateBetween(start, end,username);
+    public Map<String,Object> getAnalytics(LocalDate start, LocalDate end, String email){
+        
+        List<Expense> all = expenseRepository.findByUserInvolvementAndDateBetween(start, end,email);
         BigDecimal total = BigDecimal.ZERO; 
         Map<String,BigDecimal> byCategory=new HashMap<>();
         for(Expense e:all){
             BigDecimal myShare = BigDecimal.ZERO;
-            if(e.getSplits()!=null){
+            if(e.getSplits()!=null && !e.getSplits().isEmpty()){
                 for(ExpenseSplit s:e.getSplits()){
-                    if(s.getMemberIdentifier().equals(username)){
+                    if(s.getMemberIdentifier().equals(email)){
                         myShare=myShare.add(s.getAmount());
                     }
+                }
+            }
+            else{
+                if(e.getOwner().getEmail().equals(email)){
+                    myShare = e.getAmount();
                 }
             }
             if(myShare.compareTo(BigDecimal.ZERO)>0){
                 total = total.add(myShare);
                 String cat=e.getCategory()!=null ? e.getCategory().getName():"Uncategorized";
-                byCategory.put(cat,byCategory.getOrDefault(cat, BigDecimal.ZERO).add(e.getAmount()));
+                byCategory.put(cat,byCategory.getOrDefault(cat, BigDecimal.ZERO).add(myShare));
             }     
         }
         Map<String,Object> res=new HashMap<>();

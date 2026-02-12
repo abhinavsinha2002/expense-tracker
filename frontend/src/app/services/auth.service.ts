@@ -132,4 +132,8 @@ export class AuthService{
             })
         )
     }
+
+    validateResetToken(token: string){
+        return this.http.get<boolean>(`${this.base}/reset/validate?token=${token}`);
+    }
 }
