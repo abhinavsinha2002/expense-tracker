@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { GroupService } from '../../services/group.service';
@@ -37,7 +37,8 @@ export class GroupDetailComponent implements OnInit {
     constructor(
         private route: ActivatedRoute,
         private groupService: GroupService,
-        private expenseService: ExpenseService
+        private expenseService: ExpenseService,
+        private cdr: ChangeDetectorRef
     ) { }
 
     ngOnInit() {
@@ -56,15 +57,18 @@ export class GroupDetailComponent implements OnInit {
             next: (data) => {
                 this.group = data; // Data is now guaranteed
                 this.loading = false; // Loader stops here
+                this.cdr.detectChanges();
             },
             error: (err) => {
                 console.error('Failed to load group', err);
                 this.loading = false;
+                this.cdr.detectChanges();
             }
         });
         this.expenseService.getExpensesByGroup(this.groupId).subscribe({
             next: (data) => {
                 this.expenses = data;
+                this.cdr.detectChanges();
             },
             error: (err) => console.error(err)
         });
@@ -72,6 +76,7 @@ export class GroupDetailComponent implements OnInit {
         this.groupService.settle(this.groupId).subscribe({
             next: (data) => {
                 this.settlements = data;
+                this.cdr.detectChanges();
             },
             error: (err) => console.error(err)
         });
@@ -90,8 +95,15 @@ export class GroupDetailComponent implements OnInit {
     }
 
     getGroupImage(name: string = ''): string {
-        // Reuse your logic or a simplified version
-        if (name.toLowerCase().includes('trip')) return 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?q=80&w=2070';
-        return 'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=2070';
+        const lower = name.toLowerCase();
+    if (lower.includes('trip') || lower.includes('travel') || lower.includes('vacation') || lower.includes('goa')) 
+      return 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?q=80&w=2070&auto=format&fit=crop';
+    if (lower.includes('home') || lower.includes('house') || lower.includes('rent') || lower.includes('flat')) 
+      return 'https://images.unsplash.com/photo-1518780664697-55e3ad937233?q=80&w=2065&auto=format&fit=crop';
+    if (lower.includes('food') || lower.includes('dinner') || lower.includes('lunch') || lower.includes('party')) 
+      return 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=2070&auto=format&fit=crop';
+    if (lower.includes('office') || lower.includes('work') || lower.includes('team')) 
+      return 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2070&auto=format&fit=crop';
+    return 'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=2070&auto=format&fit=crop';
     }
 }

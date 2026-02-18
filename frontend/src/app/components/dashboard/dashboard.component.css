@@ -66,11 +66,11 @@
 
 /* Filter Dropdown */
 .glass-pill {
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--bg-card);
   backdrop-filter: blur(10px);
   padding: 8px 20px;
   border-radius: 50px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--border-color);
   display: flex;
   align-items: center;
   gap: 10px;
@@ -78,14 +78,14 @@
 
 .glass-pill label {
   font-size: 0.85rem;
-  color: #ccc;
+  color: var(--text-muted);
   font-weight: 500;
 }
 
 select {
   background: transparent;
   border: none;
-  color: #dcb14a;
+  color: var(--gold-accent);
   font-weight: 600;
   font-family: inherit;
   cursor: pointer;
@@ -93,19 +93,20 @@ select {
 }
 
 select option {
-  background: #222; /* Dark background for options */
-  color: #fff;
+  background: var(--bg-card); 
+  color: var(--text-main);
 }
 
 /* --- HERO CARD --- */
 .glass-card {
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--bg-card);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 20px;
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
   padding: 25px;
+  border: 1px solid var(--border-color); /* FIX */
+  box-shadow: var(--card-shadow);
+  color: var(--text-main);
 }
 
 .hero-card {
@@ -117,7 +118,7 @@ select option {
 
 .hero-content .label {
   font-size: 0.9rem;
-  color: #aaa;
+  color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 1px;
   margin-bottom: 5px;
@@ -127,7 +128,7 @@ select option {
   font-size: 3.5rem;
   font-weight: 700;
   margin: 0;
-  color: #fff;
+  color: var(--text-main);
   text-shadow: 0 4px 10px rgba(0,0,0,0.3);
 }
 
@@ -166,7 +167,7 @@ select option {
   font-size: 1.2rem;
   font-weight: 600;
   margin: 0;
-  color: #eee;
+  color: var(--text-main);
 }
 
 .card-icon {
