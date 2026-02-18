@@ -1,0 +1,51 @@
+/* CONTAINER */
+.detail-container { height: 100%; display: flex; flex-direction: column; overflow: hidden; }
+
+/* HERO HEADER */
+.hero-header {
+  position: relative;
+  height: 250px;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: flex-end;
+  padding: 30px;
+}
+.overlay {
+  position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.8));
+}
+.hero-content { position: relative; z-index: 2; color: #fff; }
+.hero-content h1 { margin: 0; font-family: 'Playfair Display', serif; font-size: 2.5rem; }
+.badges { display: flex; gap: 10px; margin-top: 10px; }
+.badge { background: rgba(255,255,255,0.2); backdrop-filter: blur(5px); padding: 5px 12px; border-radius: 20px; font-size: 0.8rem; border: 1px solid rgba(255,255,255,0.3); }
+
+/* CONTENT */
+.content-wrapper { flex: 1; overflow-y: auto; padding: 20px; }
+.glass-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 15px;
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  color: #fff;
+}
+
+/* EXPENSE ITEM */
+.expense-item { gap: 15px; }
+.date-box { display: flex; flex-direction: column; align-items: center; background: rgba(255,255,255,0.1); padding: 8px; border-radius: 8px; min-width: 50px; }
+.date-box .day { font-size: 1.2rem; font-weight: bold; }
+.date-box .month { font-size: 0.7rem; text-transform: uppercase; }
+.exp-info { flex: 1; }
+.exp-info h4 { margin: 0; font-size: 1rem; }
+.exp-info p { margin: 0; font-size: 0.8rem; opacity: 0.7; }
+.exp-amount { font-size: 1.2rem; font-weight: 600; color: #dcb14a; }
+
+/* SETTLEMENT CARD */
+.settle-card { justify-content: space-between; }
+.arrow { display: flex; flex-direction: column; align-items: center; color: #aaa; font-size: 0.8rem; }
+.arrow .amount { color: #ef4444; font-weight: bold; font-size: 1rem; margin-top: 2px; }
+.user { font-weight: 600; font-size: 1.1rem; }

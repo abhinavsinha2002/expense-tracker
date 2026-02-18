@@ -1,69 +1,62 @@
-<div class="dashboard-container" [class.dark-mode]="isDark">
+<div class="dashboard-container" [class.light-mode]="!isDark">
   
   <aside class="sidebar">
-    
+    <div class="brand-header">
+      <mat-icon class="brand-icon">account_balance_wallet</mat-icon>
+      <div class="brand-text">
+        <h1>HISAB<span class="gold">KITAB</span></h1>
+      </div>
+    </div>
+
     <div class="profile-section">
       <ng-container *ngIf="auth.isLoggedIn()">
         <div class="avatar-circle">
-          <img src="https://i.pravatar.cc/150?img=11" alt="User">
+          <img [src]="auth.currentUser?.profilePicture || 'assets/default-avatar.jpg'" alt="User">
         </div>
         <div class="profile-info">
-          <h3>{{ auth.currentUser?.fullName || 'Abhinav Kumar' }}</h3>
-          <p>Admin</p>
+          <h3>{{ auth.currentUser?.fullName || 'User' }}</h3>
+          <p>Premium Member</p>
         </div>
       </ng-container>
 
       <ng-container *ngIf="!auth.isLoggedIn()">
         <div class="avatar-circle guest-avatar">
-          <mat-icon>person</mat-icon>
+          <mat-icon>person_outline</mat-icon>
         </div>
         <div class="profile-info">
-          <h3>Guest User</h3>
+          <h3>Guest</h3>
           <p>Welcome</p>
         </div>
       </ng-container>
     </div>
 
     <nav class="nav-menu">
-      <p class="menu-label">MAIN MENU</p>
+      <p class="menu-label">MENU</p>
       
-      <a routerLink="/main/" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}" class="nav-item">
+      <a routerLink="/main" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}" class="nav-item">
         <mat-icon class="nav-icon">dashboard</mat-icon>
         <span>Dashboard</span>
       </a>
 
-      <a routerLink="/main/expenses" routerLinkActive="active-link" class="nav-item">
-        <mat-icon class="nav-icon">account_balance_wallet</mat-icon>
-        <span>Expenses</span>
+      <a routerLink="expenses" routerLinkActive="active-link" class="nav-item">
+        <mat-icon class="nav-icon">receipt_long</mat-icon>
+        <span>Personal Expenses</span>
       </a>
 
-      <a routerLink="/groups" routerLinkActive="active-link" class="nav-item">
+      <a routerLink="groups" routerLinkActive="active-link" class="nav-item">
         <mat-icon class="nav-icon">groups</mat-icon>
         <span>Groups</span>
       </a>
 
-      <a routerLink="/chat" routerLinkActive="active-link" class="nav-item">
-        <mat-icon class="nav-icon">chat</mat-icon>
-        <span>Chat Room</span>
-      </a>
-      
-      <a routerLink="/currency" routerLinkActive="active-link" class="nav-item">
-        <mat-icon class="nav-icon">currency_exchange</mat-icon>
-        <span>Converter</span>
-      </a>
-    </nav>
 
-    <div class="sidebar-footer">
-      <p class="menu-label">PREFERENCES</p>
-      
-      <a routerLink="/settings" routerLinkActive="active-link" class="nav-item">
+      <a routerLink="settings" routerLinkActive="active-link" class="nav-item">
         <mat-icon class="nav-icon">settings</mat-icon>
         <span>Settings</span>
       </a>
       
       <button *ngIf="auth.isLoggedIn()" (click)="logout()" class="nav-item logout">
         <mat-icon class="nav-icon">logout</mat-icon>
-        <span>Logout</span>
+        <span>Sign Out</span>
       </button>
 
       <ng-container *ngIf="!auth.isLoggedIn()">
@@ -71,29 +64,26 @@
           <mat-icon class="nav-icon">login</mat-icon>
           <span>Login</span>
         </a>
-        <a routerLink="/register" class="nav-item">
-          <mat-icon class="nav-icon">person_add</mat-icon> <span>Register</span>
-        </a>
       </ng-container>
-    </div>
+    </nav>
   </aside>
 
   <main class="main-content">
     
     <header class="content-header">
       <div class="header-text">
-        <h1>Overview</h1>
+        <h1>{{ getGreeting() }}, {{ auth.currentUser?.fullName || 'Guest' }}</h1>
         <p class="date">{{ today | date:'fullDate' }}</p>
       </div>
 
       <div class="action-group">
-        <button class="notification-btn">
-          <mat-icon>notifications</mat-icon>
-          <span class="notification-badge"></span> 
-        </button>
-      
-        <button class="theme-icon-btn" (click)="toggleTheme()">
+        <button class="theme-icon-btn" (click)="toggleTheme()" matTooltip="Toggle Theme">
           <mat-icon>{{ isDark ? 'light_mode' : 'dark_mode' }}</mat-icon>
+        </button>
+
+        <button class="notification-btn" matTooltip="Notifications">
+          <mat-icon>notifications_none</mat-icon>
+          <span class="notification-badge"></span> 
         </button>
       </div>
     </header>

@@ -10,6 +10,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { Expense } from '../../models/expense';
 import { MatDividerModule } from '@angular/material/divider'
+import {User  } from '../../models/user';
 
 @Component({
   selector: 'app-expense-form',
@@ -31,6 +32,7 @@ import { MatDividerModule } from '@angular/material/divider'
 export class ExpenseFormComponent{
     form:FormGroup;
     isSubmitting = false;
+    user?: User;
 
     constructor(
         private fb:FormBuilder,
@@ -71,6 +73,7 @@ export class ExpenseFormComponent{
         this.isSubmitting = true;
         const v = this.form.value;
         const dto:Expense = {
+            owner: this.user as User,
             description: v.description,
             amount:+v.amount,
             category:v.category || undefined,

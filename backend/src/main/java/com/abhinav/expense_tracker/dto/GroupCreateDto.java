@@ -4,19 +4,24 @@ import java.util.Set;
 
 public class GroupCreateDto {
     private String name;
-    private Set<String> members;
+    private String currency;
 
     public GroupCreateDto(){}
+
     public String getName() {
         return name;
     }
+
     public void setName(String name) {
         this.name = name;
     }
-    public Set<String> getMembers() {
-        return members;
+
+    public String getCurrency() {
+        return currency;
     }
-    public void setMembers(Set<String> members) {
-        this.members = members;
+
+    public void setCurrency(String currency) {
+        this.currency = currency;
     }
+
 }

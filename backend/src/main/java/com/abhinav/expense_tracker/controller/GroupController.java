@@ -15,22 +15,35 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.abhinav.expense_tracker.dto.ExpenseResponseDto;
 import com.abhinav.expense_tracker.dto.GroupCreateDto;
 import com.abhinav.expense_tracker.dto.GroupResponseDto;
 import com.abhinav.expense_tracker.dto.SettleUpTransactionDto;
+import com.abhinav.expense_tracker.entity.Expense;
 import com.abhinav.expense_tracker.entity.ExpenseGroup;
+import com.abhinav.expense_tracker.security.JwtUtil;
 import com.abhinav.expense_tracker.service.GroupService;
 import com.abhinav.expense_tracker.util.DtoMapper;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/api/groups")
 public class GroupController {
     @Autowired private GroupService groupService;
+    @Autowired private JwtUtil jwtUtil;
 
     @PostMapping
     public ResponseEntity<GroupResponseDto> createGroup(@RequestBody GroupCreateDto dto,Authentication auth){
-        ExpenseGroup g = groupService.createGroup(dto.getName(), auth.getName(), dto.getMembers());
+        ExpenseGroup g = groupService.createGroup(dto.getName(), dto.getCurrency(),auth.getName());
         return ResponseEntity.status(HttpStatus.CREATED).body(DtoMapper.toGroupDto(g));
+    }
+
+    @PostMapping("/join/{token}")
+    public ResponseEntity<?> joinGroup(@PathVariable String token, HttpServletRequest req){
+        String username = jwtUtil.extractUsername(token);
+        groupService.joinGroup(token, username);
+        return ResponseEntity.ok("Joined group successfully");
     }
 
     @GetMapping("/{id}/settle")
@@ -42,6 +55,21 @@ public class GroupController {
     public ResponseEntity<List<GroupResponseDto>> listAllGroups(Authentication auth){
         List<ExpenseGroup> groups = groupService.findGroupsForUser(auth.getName());
         List<GroupResponseDto> dtos = groups.stream().map(DtoMapper::toGroupDto).collect(Collectors.toList());
+        return ResponseEntity.ok(dtos);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<GroupResponseDto> getGroup(@PathVariable Long id, Authentication auth){
+        ExpenseGroup g = groupService.getGroup(id, auth.getName());
+        return ResponseEntity.ok(DtoMapper.toGroupDto(g));
+    }
+
+    @GetMapping("/{id}/expenses")
+    public ResponseEntity<List<ExpenseResponseDto>> getGroupExpenses(@PathVariable Long id, Authentication auth){
+        List<Expense> expenses = groupService.getGroupExpenses(id, auth.getName());
+        List<ExpenseResponseDto> dtos = expenses.stream()
+                                        .map(DtoMapper::toExpenseDto)
+                                        .collect(Collectors.toList());
         return ResponseEntity.ok(dtos);
     }
 

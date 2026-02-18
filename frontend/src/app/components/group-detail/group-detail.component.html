@@ -1,0 +1,80 @@
+<div class="detail-container fade-in" *ngIf="!loading && group; else loadingTpl">
+  
+  <div class="hero-header" [style.background-image]="'url(' + getGroupImage(group.name) + ')'">
+    <div class="overlay"></div>
+    <div class="hero-content">
+      <h1>{{ group.name }}</h1>
+      <p>{{ group.description || 'No description' }}</p>
+      <div class="badges">
+        <span class="badge">{{ group.currency }}</span>
+        <span class="badge">{{ group.members?.length }} Members</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="content-wrapper">
+    <mat-tab-group mat-stretch-tabs="false" animationDuration="0ms" class="glass-tabs">
+      
+      <mat-tab label="Expenses">
+        <div class="tab-content">
+          <div *ngIf="expenses.length === 0" class="empty-state">
+            <mat-icon>receipt_long</mat-icon>
+            <p>No expenses recorded yet.</p>
+          </div>
+          
+          <div class="expense-list">
+            <div class="expense-item glass-card" *ngFor="let exp of expenses">
+              <div class="date-box">
+                <span class="day">{{ getExpenseDate(exp.date) | date:'dd' }}</span>
+                <span class="month">{{ getExpenseDate(exp.date) | date:'MMM' }}</span>
+              </div>
+              <div class="exp-info">
+                <h4>{{ exp.description }}</h4>
+                <p>Paid by <strong>{{ exp.owner.fullName }}</strong></p>
+              </div>
+              <div class="exp-amount">
+                {{ exp.amount | currency: (group.currency) }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </mat-tab>
+
+      <mat-tab label="Balances">
+        <div class="tab-content">
+          <div *ngIf="settlements.length === 0" class="empty-state">
+             <mat-icon>check_circle</mat-icon>
+             <p>All settled up!</p>
+          </div>
+          
+          <div class="settlement-list">
+            <div class="settle-card glass-card" *ngFor="let s of settlements">
+              <div class="user from">{{ s.fromUser }}</div>
+              <div class="arrow">
+                <span>pays</span>
+                <mat-icon>arrow_forward</mat-icon>
+                <span class="amount">{{ s.amount | currency: group.currency }}</span>
+              </div>
+              <div class="user to">{{ s.toUser }}</div>
+            </div>
+          </div>
+        </div>
+      </mat-tab>
+
+    </mat-tab-group>
+  </div>
+</div>
+
+<ng-template #loadingTpl>
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+</ng-template>
+
+<ng-template #loadingTpl>
+  <div *ngIf="loading">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  </div>
+  <div *ngIf="!loading && !group" class="empty-state">
+    <mat-icon>error_outline</mat-icon>
+    <p>Group not found or access denied.</p>
+  </div>
+</ng-template>

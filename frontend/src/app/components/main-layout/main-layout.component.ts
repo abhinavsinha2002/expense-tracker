@@ -24,13 +24,15 @@ export class MainLayoutComponent {
 
   constructor(public auth: AuthService, private router: Router) {}
 
+  getGreeting(): string {
+    const hour = this.today.getHours();
+    if (hour < 12) return 'Good Morning';
+    if (hour < 18) return 'Good Afternoon';
+    return 'Good Evening';
+  }
+
   toggleTheme() {
     this.isDark = !this.isDark;
-    if (this.isDark) {
-      document.body.classList.add('dark-theme');
-    } else {
-      document.body.classList.remove('dark-theme');
-    }
   }
 
   logout() {

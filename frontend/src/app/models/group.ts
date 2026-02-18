@@ -5,6 +5,7 @@ export interface Group{
     id?:number;
     name:string;
     owner:User;
+    currency?:string;
     description?:string;
     members?:User[];
     expenses?:Expense[];

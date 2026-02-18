@@ -1,60 +1,72 @@
-<div class="dashboard-container fade-in-up">
+<div class="dashboard-wrapper">
   
-  <div class="stats-grid">
+  <div class="bg-overlay"></div>
+
+  <div class="content-container">
     
-    <mat-card class="stat-card">
-      <div class="icon-circle blue">
-        <mat-icon>account_balance_wallet</mat-icon>
+    <header class="dashboard-header fade-in-down">
+      
+      <div class="filters glass-pill">
+        <label>Period:</label>
+        <select [(ngModel)]="selectedPeriod" (change)="loadData()">
+          <option value="1M">Last Month</option>
+          <option value="3M">Last 3 Months</option>
+          <option value="6M">Last 6 Months</option>
+          <option value="1Y">Last Year</option>
+        </select>
       </div>
-      <div class="stat-content">
-        <p>Total Spent</p>
-        <h2>{{ totalSpent | currency:'INR' }}</h2>
-      </div>
-    </mat-card>
+    </header>
 
-    <mat-card class="stat-card">
-      <div class="icon-circle green">
-        <mat-icon>savings</mat-icon>
+    <div class="hero-card glass-card fade-in-up">
+      <div class="hero-content">
+        <p class="label">Total Expenditure</p>
+        <h2 class="amount">₹ {{ totalSpent | number:'1.0-0' }}</h2>
+        <p class="sub-label" *ngIf="expenses.length > 0">
+          Across {{ expenses.length }} transactions
+        </p>
       </div>
-      <div class="stat-content">
-        <p>Monthly Budget</p>
-        <h2>{{ budget | currency:'INR' }}</h2>
+      <div class="hero-icon">
+        <span class="material-icons">savings</span>
       </div>
-    </mat-card>
+    </div>
 
-    <mat-card class="stat-card">
-      <div class="icon-circle" [ngClass]="budgetLeft > 0 ? 'orange' : 'red'">
-        <mat-icon>{{ budgetLeft > 0 ? 'pie_chart' : 'warning' }}</mat-icon>
+    <div class="charts-grid">
+      
+      <div class="chart-card glass-card fade-in-up delay-1">
+        <div class="card-header">
+          <h3>Spending Trend</h3>
+          <span class="material-icons card-icon">show_chart</span>
+        </div>
+        <div class="chart-wrapper line-chart">
+          <canvas baseChart
+            [data]="lineChartData"
+            [options]="lineChartOptions"
+            [type]="'line'">
+          </canvas>
+        </div>
       </div>
-      <div class="stat-content">
-        <p>Budget Left</p>
-        <h2 [class.negative]="budgetLeft < 0">{{ budgetLeft | currency:'INR' }}</h2>
+
+      <div class="chart-card glass-card fade-in-up delay-2">
+        <div class="card-header">
+          <h3>Expense Breakdown</h3>
+          <div class="toggle-switch">
+            <button [class.active]="breakdownType === 'category'" (click)="toggleBreakdown('category')">Category</button>
+            <button [class.active]="breakdownType === 'group'" (click)="toggleBreakdown('group')">Group</button>
+          </div>
+        </div>
+        <div class="chart-wrapper doughnut-chart">
+          <div class="chart-center-text">
+            <span>{{ breakdownType | titlecase }}</span>
+          </div>
+          <canvas baseChart
+            [data]="doughnutChartData"
+            [options]="doughnutChartOptions"
+            [type]="'doughnut'">
+          </canvas>
+        </div>
       </div>
-    </mat-card>
+
+    </div>
 
   </div>
-
-  <div class="charts-section">
-    <mat-card class="chart-card">
-      <div class="card-header">
-        <h3>Expense Breakdown</h3>
-        <button mat-icon-button><mat-icon>more_vert</mat-icon></button>
-      </div>
-      <div class="chart-wrapper">
-        <canvas baseChart 
-          [data]="pieData" 
-          [type]="'pie'" 
-          [options]="pieOptions">
-        </canvas>
-      </div>
-    </mat-card>
-    
-    <mat-card class="chart-card placeholder-card">
-       <div class="empty-state">
-         <mat-icon>bar_chart</mat-icon>
-         <p>More analytics coming soon...</p>
-       </div>
-    </mat-card>
-  </div>
-
 </div>

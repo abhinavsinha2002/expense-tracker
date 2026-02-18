@@ -14,12 +14,16 @@ export class GroupService{
         return this.http.post<Group>(this.base,dto);
     }
 
-    list():Observable<Group[]>{
+    getGroups():Observable<Group[]>{
         return this.http.get<Group[]>(this.base);
     }
 
     settle(groupId:number):Observable<Settlement[]>{
         return this.http.get<Settlement[]>(`${this.base}/${groupId}/settle`);
+    }
+
+    getGroupById(id:number):Observable<Group>{
+        return this.http.get<Group>(`${this.base}/${id}`);
     }
     
 }

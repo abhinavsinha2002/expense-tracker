@@ -1,90 +1,158 @@
-/* =========================================================
-   1. LAYOUT GRID
-   ========================================================= */
-.dashboard-container {
-  padding-top: 10px;
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/icon?family=Material+Icons");
+
+:host {
+  display: block;
+  font-family: "Poppins", sans-serif;
+  color: #fff;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* --- BACKGROUND --- */
+.dashboard-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  /* Use the same background as Login for consistency */
+  background: url('/assets/mono.jpeg') no-repeat center center/cover;
+}
+
+.bg-overlay {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.7); /* Dark overlay for text readability */
+  z-index: 1;
+}
+
+.content-container {
+  position: relative;
+  z-index: 2;
+  height: 100%;
+  overflow-y: auto; /* Allow scrolling if content overflows */
+  padding: 30px 5%;
   display: flex;
   flex-direction: column;
-  gap: 30px;
+  gap: 25px;
 }
 
-/* =========================================================
-   2. STAT CARDS (Top Row)
-   ========================================================= */
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 20px;
-}
-
-.stat-card {
+/* --- HEADER --- */
+.dashboard-header {
   display: flex;
-  flex-direction: row; /* Icon left, Text right */
+  justify-content: space-between;
   align-items: center;
-  padding: 25px;
-  border-radius: 20px;
-  background: white;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.02); /* Very subtle shadow */
-  border: 1px solid rgba(0,0,0,0.03);
-  transition: transform 0.2s, box-shadow 0.2s;
+  margin-bottom: 10px;
 }
 
-.stat-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-}
-
-/* Icons */
-.icon-circle {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
+.brand {
   display: flex;
   align-items: center;
-  justify-content: center;
-  margin-right: 20px;
+  gap: 10px;
 }
-.icon-circle mat-icon { font-size: 30px; width: 30px; height: 30px; }
 
-/* Icon Colors */
-.blue   { background: #eff6ff; color: #3b82f6; }
-.green  { background: #ecfdf5; color: #10b981; }
-.orange { background: #fff7ed; color: #f59e0b; }
-.red    { background: #fef2f2; color: #ef4444; }
+.brand-icon {
+  font-size: 32px;
+  color: #dcb14a;
+}
 
-/* Text */
-.stat-content p {
+.brand h1 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  letter-spacing: 1px;
   margin: 0;
-  color: #64748b;
-  font-size: 0.9rem;
+}
+
+.gold { color: #dcb14a; }
+
+/* Filter Dropdown */
+.glass-pill {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  padding: 8px 20px;
+  border-radius: 50px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.glass-pill label {
+  font-size: 0.85rem;
+  color: #ccc;
   font-weight: 500;
 }
 
-.stat-content h2 {
-  margin: 5px 0 0 0;
-  color: #1e293b;
-  font-size: 1.6rem;
-  font-weight: 700;
-  font-family: 'Poppins', sans-serif;
+select {
+  background: transparent;
+  border: none;
+  color: #dcb14a;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  outline: none;
 }
 
-.stat-content h2.negative { color: #ef4444; }
+select option {
+  background: #222; /* Dark background for options */
+  color: #fff;
+}
 
-/* =========================================================
-   3. CHARTS SECTION
-   ========================================================= */
-.charts-section {
+/* --- HERO CARD --- */
+.glass-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+  padding: 25px;
+}
+
+.hero-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(220,177,74,0.05) 100%);
+}
+
+.hero-content .label {
+  font-size: 0.9rem;
+  color: #aaa;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 5px;
+}
+
+.hero-content .amount {
+  font-size: 3.5rem;
+  font-weight: 700;
+  margin: 0;
+  color: #fff;
+  text-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+.hero-content .sub-label {
+  font-size: 0.85rem;
+  color: #dcb14a;
+  margin-top: 5px;
+}
+
+.hero-icon span {
+  font-size: 60px;
+  color: rgba(255, 255, 255, 0.1);
+}
+
+/* --- CHARTS GRID --- */
+.charts-grid {
   display: grid;
-  grid-template-columns: 2fr 1fr; /* Pie Chart gets more space */
-  gap: 20px;
+  grid-template-columns: 2fr 1fr; /* Line chart wider than Donut */
+  gap: 25px;
+  flex: 1; /* Fill remaining space */
 }
 
 .chart-card {
-  padding: 25px;
-  border-radius: 20px;
-  background: white;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.02);
-  min-height: 400px; /* Ensure height for chart */
+  display: flex;
+  flex-direction: column;
 }
 
 .card-header {
@@ -95,35 +163,80 @@
 }
 
 .card-header h3 {
-  margin: 0;
   font-size: 1.2rem;
   font-weight: 600;
-  color: #334155;
+  margin: 0;
+  color: #eee;
+}
+
+.card-icon {
+  color: #666;
 }
 
 .chart-wrapper {
-  height: 300px; /* Fixed height for canvas container */
   position: relative;
+  flex: 1;
+  width: 100%;
+  min-height: 300px;
 }
 
-/* Placeholder styles */
-.placeholder-card {
+/* Toggle Switch */
+.toggle-switch {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 20px;
+  padding: 4px;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #f8fafc; /* Slightly darker */
-  border: 2px dashed #e2e8f0;
-  box-shadow: none;
+  gap: 5px;
 }
 
-.empty-state { text-align: center; color: #94a3b8; }
-.empty-state mat-icon { font-size: 48px; width: 48px; height: 48px; opacity: 0.5; }
+.toggle-switch button {
+  background: transparent;
+  border: none;
+  color: #888;
+  padding: 5px 15px;
+  border-radius: 15px;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-family: inherit;
+  font-weight: 600;
+}
 
-/* =========================================================
-   4. RESPONSIVE
-   ========================================================= */
+.toggle-switch button.active {
+  background: #dcb14a;
+  color: #000;
+}
+
+/* Center text for Donut */
+.chart-center-text {
+  position: absolute;
+  top: 50%; left: 35%; /* Adjusted for legend on right */
+  transform: translate(-50%, -50%);
+  text-align: center;
+  pointer-events: none;
+}
+
+.chart-center-text span {
+  color: rgba(255,255,255,0.5);
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+/* --- ANIMATIONS --- */
+.fade-in-down { animation: fadeInDown 0.8s ease-out; }
+@keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+
+.fade-in-up { animation: fadeInUp 0.8s ease-out backwards; }
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+.delay-1 { animation-delay: 0.1s; }
+.delay-2 { animation-delay: 0.2s; }
+
+/* Responsive */
 @media (max-width: 900px) {
-  .charts-section {
-    grid-template-columns: 1fr; /* Stack charts on tablet */
+  .charts-grid {
+    grid-template-columns: 1fr; /* Stack on mobile */
   }
+  .hero-content .amount { font-size: 2.5rem; }
+  .chart-center-text { left: 50%; }
 }

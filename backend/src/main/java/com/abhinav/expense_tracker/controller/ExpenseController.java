@@ -59,7 +59,7 @@ public class ExpenseController {
     }
 
     @GetMapping("/analytics")
-    public ResponseEntity<Map<String,Object>> getAnalytics(@RequestParam("start") String startDate, @RequestParam("end") String endDate, Authentication auth){
+    public ResponseEntity<List<ExpenseResponseDto>> getAnalytics(@RequestParam("start") String startDate, @RequestParam("end") String endDate, Authentication auth){
         LocalDate start  = LocalDate.parse(startDate);
         LocalDate end = LocalDate.parse(endDate);
 

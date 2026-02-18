@@ -14,7 +14,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import com.abhinav.expense_tracker.entity.AuthProvider; // Ensure this is imported
+import com.abhinav.expense_tracker.entity.AuthProvider;
 import com.abhinav.expense_tracker.entity.Category;
 import com.abhinav.expense_tracker.entity.Expense;
 import com.abhinav.expense_tracker.entity.ExpenseGroup;
@@ -38,137 +38,114 @@ public class DataLoader implements CommandLineRunner {
     @Override
     @Transactional
     public void run(String... args) throws Exception {
-        // Only load data if the database is empty
+        // Requires empty DB to run
         if (userRepository.count() == 0) {
-            System.out.println("Loading Mock Data...");
+            System.out.println("Loading Dated Test Data...");
             BCryptPasswordEncoder enc = new BCryptPasswordEncoder();
-            String defaultPassword = enc.encode("password");
+            String pwd = enc.encode("password");
 
-            // --- 1. Create Users (Updated with Full Names) ---
-            User abhinav = createUser("Abhinav Sinha", "abhinav", "abhinavsinha2002@gmail.com", defaultPassword);
-            User anjalee = createUser("Anjalee Kumari", "anjalee", "anjalee@gmail.com", defaultPassword);
-            User rohit   = createUser("Rohit Sharma", "rohit", "rohit@gmail.com", defaultPassword);
-            User neha    = createUser("Neha Gupta", "neha", "neha@gmail.com", defaultPassword);
-            User rahul   = createUser("Rahul Verma", "rahul", "rahul@gmail.com", defaultPassword);
+            // 1. Create Users
+            User abhinav = createUser("Abhinav Sinha", "abhinav", "abhinav@gmail.com", pwd);
+            User anjalee = createUser("Anjalee Kumari", "anjalee", "anjalee@gmail.com", pwd);
+            User ravi    = createUser("Ravi Kumar", "ravi", "ravi@gmail.com", pwd);
 
-            List<User> allUsers = Arrays.asList(abhinav, anjalee, rohit, neha, rahul);
-
-            // --- 2. Create Categories ---
+            // 2. Create Categories
             Category food = createCategory("Food");
-            Category transport = createCategory("Transport");
-            Category utilities = createCategory("Utilities");
-            Category entertainment = createCategory("Entertainment");
             Category travel = createCategory("Travel");
             Category shopping = createCategory("Shopping");
+            Category bills = createCategory("Utilities");
 
-            List<Category> categories = Arrays.asList(food, transport, utilities, entertainment, travel, shopping);
+            // 3. Create Groups
+            ExpenseGroup patnaGroup = createGroup("Patna Group", abhinav, new HashSet<>(Arrays.asList(abhinav, anjalee)));
+            ExpenseGroup blrGroup = createGroup("Bangalore Trip", abhinav, new HashSet<>(Arrays.asList(abhinav, ravi)));
 
-            // --- 3. Create Groups ---
+            // 4. Create Expenses with Specific Dates
+
+            // === 1. LAST 30 DAYS (1M) ===
+            // Abhinav Personal: 200 (Today), 500 (15 days ago)
+            createPersonal(abhinav, 200, food, 0); 
+            createPersonal(abhinav, 500, shopping, 15);
+
+            // Patna Group: Dinner (5 days ago), Snacks (10 days ago)
+            createSplitExpense("Dinner", BigDecimal.valueOf(800), 5, abhinav, patnaGroup, food, 
+                Arrays.asList(new Split(abhinav, 400), new Split(anjalee, 400)));
             
-            // Group A: Shimla Trip (Abhinav & Anjalee)
-            ExpenseGroup shimlaTrip = createGroup("Shimla Trip", abhinav, new HashSet<>(Arrays.asList(abhinav, anjalee)));
+            createSplitExpense("Snacks", BigDecimal.valueOf(600), 10, abhinav, patnaGroup, food, 
+                Arrays.asList(new Split(abhinav, 300), new Split(anjalee, 300)));
+
+            // Bangalore Group: Breakfast (2 days ago)
+            createSplitExpense("Breakfast", BigDecimal.valueOf(500), 2, abhinav, blrGroup, food, 
+                Arrays.asList(new Split(abhinav, 250), new Split(ravi, 250)));
+
+
+            // === 2. LAST 3 MONTHS (3M - Includes 1M data) ===
+            // Expenses between 31 and 90 days ago
             
-            // Group B: Flat 101 (Abhinav, Rohit, Rahul) - Shared living
-            ExpenseGroup flat101 = createGroup("Flat 101", abhinav, new HashSet<>(Arrays.asList(abhinav, rohit, rahul)));
+            // Abhinav Personal: 800 (45 days ago)
+            createPersonal(abhinav, 800, bills, 45);
+
+            // Patna Group: Lunch (60 days ago)
+            createSplitExpense("Lunch", BigDecimal.valueOf(1200), 60, anjalee, patnaGroup, food, 
+                Arrays.asList(new Split(abhinav, 600), new Split(anjalee, 600)));
+
+            // Bangalore Group: Cab (40 days ago)
+            createSplitExpense("Cab", BigDecimal.valueOf(1600), 40, abhinav, blrGroup, travel, 
+                Arrays.asList(new Split(abhinav, 100), new Split(ravi, 1500)));
+
+
+            // === 3. LAST 6 MONTHS (6M - Includes 1M & 3M data) ===
+            // Expenses between 91 and 180 days ago
+
+            // Abhinav Personal: 900 (120 days ago)
+            createPersonal(abhinav, 900, food, 120);
+
+            // Patna Group: Shopping (150 days ago)
+            createSplitExpense("Shopping", BigDecimal.valueOf(2500), 150, abhinav, patnaGroup, shopping, 
+                Arrays.asList(new Split(abhinav, 2000), new Split(anjalee, 500)));
+
+            // Bangalore Group: Tickets (100 days ago)
+            createSplitExpense("Tickets", BigDecimal.valueOf(600), 100, ravi, blrGroup, travel, 
+                Arrays.asList(new Split(abhinav, 300), new Split(ravi, 300)));
+
+
+            // === 4. LAST 1 YEAR (1Y - Includes all above) ===
+            // Expenses between 181 and 365 days ago
+
+            // Abhinav Personal: 1200 (200 days ago)
+            createPersonal(abhinav, 1200, shopping, 200);
+
+            // Patna Group Edge Cases (250 days ago)
+            createSplitExpense("Anjalee Gifted Shirt", BigDecimal.valueOf(600), 250, anjalee, patnaGroup, shopping, 
+                Arrays.asList(new Split(abhinav, 600))); // Abhinav owes full
             
-            // Group C: Office Lunch (All 5 members)
-            ExpenseGroup officeGroup = createGroup("Office Gang", neha, new HashSet<>(allUsers));
+            createSplitExpense("Personal Charger in Group", BigDecimal.valueOf(500), 250, abhinav, patnaGroup, shopping, 
+                Arrays.asList(new Split(abhinav, 500))); // Abhinav paid for self
 
-            // --- 4. Generate Expenses ---
-            Random random = new Random();
+            // Bangalore Group Edge Cases (300 days ago)
+            createSplitExpense("Hotel", BigDecimal.valueOf(1300), 300, ravi, blrGroup, travel, 
+                Arrays.asList(new Split(abhinav, 600), new Split(ravi, 700)));
 
-            // A. Create 40 Personal Expenses (No Group)
-            for (int i = 0; i < 40; i++) {
-                User owner = allUsers.get(random.nextInt(allUsers.size()));
-                Category cat = categories.get(random.nextInt(categories.size()));
-                BigDecimal amount = BigDecimal.valueOf(100 + random.nextInt(900)); 
-                LocalDate date = LocalDate.now().minusDays(random.nextInt(100));
+            createSplitExpense("Ravi paid for Abhinav's Meal", BigDecimal.valueOf(450), 300, ravi, blrGroup, food, 
+                Arrays.asList(new Split(abhinav, 450))); // Abhinav owes full
 
-                createExpense(
-                    owner.getUsername() + " Personal " + cat.getName(), 
-                    amount, 
-                    date, 
-                    owner, 
-                    null, // No Group
-                    cat, 
-                    null // No Splits
-                );
-            }
+            createSplitExpense("Abhinav Personal Souvenir", BigDecimal.valueOf(300), 300, abhinav, blrGroup, shopping, 
+                Arrays.asList(new Split(abhinav, 300))); // Abhinav paid for self
 
-            // B. Create 30 "Flat 101" Expenses (Equal Splits)
-            for (int i = 0; i < 30; i++) {
-                User payer = Arrays.asList(abhinav, rohit, rahul).get(random.nextInt(3));
-                Category cat = Arrays.asList(utilities, food).get(random.nextInt(2));
-                BigDecimal totalAmount = BigDecimal.valueOf(300 + random.nextInt(1200)); 
-                LocalDate date = LocalDate.now().minusDays(random.nextInt(60));
 
-                createExpense(
-                    "Flat " + cat.getName(), 
-                    totalAmount, 
-                    date, 
-                    payer, 
-                    flat101, 
-                    cat, 
-                    generateEqualSplits(totalAmount, flat101.getMembers())
-                );
-            }
-
-            // C. Create 20 "Shimla Trip" Expenses (Uneven Splits)
-            for (int i = 0; i < 20; i++) {
-                User payer = (i % 2 == 0) ? abhinav : anjalee;
-                BigDecimal totalAmount = BigDecimal.valueOf(2000 + random.nextInt(5000));
-                LocalDate date = LocalDate.now().minusDays(100 + random.nextInt(10)); 
-
-                List<ExpenseSplitData> splits = new ArrayList<>();
-                BigDecimal share1 = totalAmount.multiply(new BigDecimal("0.60"));
-                BigDecimal share2 = totalAmount.subtract(share1);
-                
-                splits.add(new ExpenseSplitData(abhinav.getUsername(), share1));
-                splits.add(new ExpenseSplitData(anjalee.getUsername(), share2));
-
-                createExpense(
-                    "Shimla " + travel.getName(), 
-                    totalAmount, 
-                    date, 
-                    payer, 
-                    shimlaTrip, 
-                    travel, 
-                    splits
-                );
-            }
-
-            // D. Create 10 "Office Lunch" Expenses
-            for (int i = 0; i < 10; i++) {
-                User payer = neha; 
-                BigDecimal totalAmount = BigDecimal.valueOf(2500);
-                LocalDate date = LocalDate.now().minusDays(random.nextInt(20));
-
-                createExpense(
-                    "Team Treat", 
-                    totalAmount, 
-                    date, 
-                    payer, 
-                    officeGroup, 
-                    food, 
-                    generateEqualSplits(totalAmount, officeGroup.getMembers())
-                );
-            }
-            
-            System.out.println("Data Loading Complete: 100 entries created.");
+            System.out.println("Dated Test Data Loaded Successfully!");
         }
     }
 
-    // --- Helper Methods ---
+    // --- Helpers ---
 
-    // UPDATED: Now accepts fullName and sets AuthProvider
-    private User createUser(String fullName, String username, String email, String password) {
+    private User createUser(String name, String username, String email, String pwd) {
         User u = new User();
-        u.setFullName(fullName); // <--- Set the new field
+        u.setFullName(name);
         u.setUsername(username);
         u.setEmail(email);
-        u.setPassword(password);
+        u.setPassword(pwd);
         u.setEnabled(true);
-        u.setAuthProvider(AuthProvider.LOCAL); // <--- Good practice to set this explicitly
+        u.setAuthProvider(AuthProvider.LOCAL);
         return userRepository.save(u);
     }
 
@@ -184,63 +161,44 @@ public class DataLoader implements CommandLineRunner {
         return groupRepository.save(g);
     }
 
-    private void createExpense(String desc, BigDecimal amount, LocalDate date, User owner, 
-                               ExpenseGroup group, Category category, List<ExpenseSplitData> splitData) {
+    private void createPersonal(User user, double amount, Category cat, int daysAgo) {
         Expense e = new Expense();
-        e.setDescription(desc);
-        e.setAmount(amount);
-        e.setDate(date);
-        e.setOwner(owner);
-        e.setGroup(group);
-        e.setCategory(category);
-
-        if (splitData != null) {
-            for (ExpenseSplitData sd : splitData) {
-                ExpenseSplit s = new ExpenseSplit();
-                s.setMemberIdentifier(sd.username);
-                s.setAmount(sd.amount);
-                s.setExpense(e);
-                e.getSplits().add(s);
-            }
-        } else {
-            ExpenseSplit s = new ExpenseSplit();
-            s.setMemberIdentifier(owner.getUsername());
-            s.setAmount(amount);
-            s.setExpense(e);
-            e.getSplits().add(s);
-        }
-
+        e.setDescription("Personal " + cat.getName());
+        e.setAmount(BigDecimal.valueOf(amount));
+        e.setDate(LocalDate.now().minusDays(daysAgo)); 
+        e.setOwner(user);
+        e.setCategory(cat);
+        
+        ExpenseSplit s = new ExpenseSplit();
+        s.setMemberIdentifier(user.getEmail());
+        s.setAmount(BigDecimal.valueOf(amount));
+        s.setExpense(e);
+        e.getSplits().add(s);
         expenseRepository.save(e);
     }
 
-    private List<ExpenseSplitData> generateEqualSplits(BigDecimal total, Set<User> members) {
-        List<ExpenseSplitData> splits = new ArrayList<>();
-        BigDecimal size = BigDecimal.valueOf(members.size());
-        BigDecimal perHead = total.divide(size, 2, BigDecimal.ROUND_FLOOR); 
-        
-        BigDecimal currentSum = BigDecimal.ZERO;
-        int count = 0;
-        
-        for (User u : members) {
-            count++;
-            if (count == members.size()) {
-                BigDecimal remainder = total.subtract(currentSum);
-                splits.add(new ExpenseSplitData(u.getUsername(), remainder));
-            } else {
-                splits.add(new ExpenseSplitData(u.getUsername(), perHead));
-                currentSum = currentSum.add(perHead);
-            }
+    private void createSplitExpense(String desc, BigDecimal total, int daysAgo, User payer, ExpenseGroup group, Category cat, List<Split> splits) {
+        Expense e = new Expense();
+        e.setDescription(desc);
+        e.setAmount(total);
+        e.setDate(LocalDate.now().minusDays(daysAgo));
+        e.setOwner(payer);
+        e.setGroup(group);
+        e.setCategory(cat);
+
+        for(Split sp : splits) {
+            ExpenseSplit s = new ExpenseSplit();
+            s.setMemberIdentifier(sp.user.getEmail());
+            s.setAmount(BigDecimal.valueOf(sp.amount));
+            s.setExpense(e);
+            e.getSplits().add(s);
         }
-        return splits;
+        expenseRepository.save(e);
     }
 
-    private static class ExpenseSplitData {
-        String username;
-        BigDecimal amount;
-
-        public ExpenseSplitData(String username, BigDecimal amount) {
-            this.username = username;
-            this.amount = amount;
-        }
+    class Split {
+        User user;
+        double amount;
+        Split(User u, double a) { user=u; amount=a; }
     }
 }

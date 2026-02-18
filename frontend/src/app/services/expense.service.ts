@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { Expense } from '../models/expense';
-import { Observable } from 'rxjs';
+import { groupBy, Observable } from 'rxjs';
 
 export interface YearlySummary{
     total:number,
@@ -27,8 +27,14 @@ export class ExpenseService{
         return this.http.delete<void>(`${this.base}/${id}`);
     }
 
-    summary(year:number):Observable<YearlySummary>{
-        return this.http.get<YearlySummary>(`${this.base}/summary/year/${year}`);
+    getAnalytics(start:string, end:string):Observable<Expense[]>{
+        return this.http.get<Expense[]>(`${this.base}/analytics`,{
+            params: {start,end}
+        });
+    }
+
+    getExpensesByGroup(groupId: number):Observable<Expense[]>{
+        return this.http.get<Expense[]>(`${environment.apiBase}/api/groups/${groupId}/expenses`)
     }
 
     exportCsv():Observable<Blob>{

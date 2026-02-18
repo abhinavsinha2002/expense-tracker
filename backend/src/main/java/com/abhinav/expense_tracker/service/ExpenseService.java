@@ -2,6 +2,7 @@ package com.abhinav.expense_tracker.service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.abhinav.expense_tracker.dto.ExpenseDto;
+import com.abhinav.expense_tracker.dto.ExpenseResponseDto;
 import com.abhinav.expense_tracker.dto.ExpenseSplitDto;
 import com.abhinav.expense_tracker.entity.Category;
 import com.abhinav.expense_tracker.entity.Expense;
@@ -22,6 +24,7 @@ import com.abhinav.expense_tracker.repository.CategoryRepository;
 import com.abhinav.expense_tracker.repository.ExpenseRepository;
 import com.abhinav.expense_tracker.repository.GroupRepository;
 import com.abhinav.expense_tracker.repository.UserRepository;
+import com.abhinav.expense_tracker.util.DtoMapper;
 
 import jakarta.transaction.Transactional;
 
@@ -34,8 +37,8 @@ public class ExpenseService {
     @Autowired private GroupActivityService activityService;
 
     @Transactional
-    public Expense createExpenseFromDto(ExpenseDto dto,String ownerUsername){
-        User owner = userRepository.findByUsername(ownerUsername).orElseThrow(()->new IllegalArgumentException("Owner not found"));
+    public Expense createExpenseFromDto(ExpenseDto dto,String ownerEmail){
+        User owner = userRepository.findByEmail(ownerEmail).orElseThrow(()->new IllegalArgumentException("Owner not found"));
         Expense e=new Expense();
         e.setDescription(dto.getDescription());
         e.setAmount(dto.getAmount());
@@ -101,9 +104,9 @@ public class ExpenseService {
         return saved;
     }
 
-    public List<Expense> getExpensesForUser(String username){
-        User u=userRepository.findByUsername(username).orElseThrow(()->new IllegalArgumentException("User not found"));
-        return expenseRepository.findByUserInvolvement(u.getUsername());
+    public List<Expense> getExpensesForUser(String email){
+        User u=userRepository.findByEmail(email).orElseThrow(()->new IllegalArgumentException("User not found"));
+        return expenseRepository.findByUserInvolvement(u.getEmail());
     }
 
     public void deleteExpense(Long id,String email){
@@ -141,7 +144,7 @@ public class ExpenseService {
                 BigDecimal per=e.getAmount().divide(BigDecimal.valueOf(members.size()),2,BigDecimal.ROUND_HALF_UP);
                 for(User m:members){
                     ExpenseSplit s=new ExpenseSplit();
-                    s.setMemberIdentifier(m.getUsername());
+                    s.setMemberIdentifier(m.getEmail());
                     s.setAmount(per);
                     s.setExpense(e);
                     e.getSplits().add(s);
@@ -150,7 +153,7 @@ public class ExpenseService {
         
             else{
                 ExpenseSplit s=new ExpenseSplit();
-                s.setMemberIdentifier(owner.getUsername());
+                s.setMemberIdentifier(owner.getEmail());
                 s.setAmount(e.getAmount());
                 s.setExpense(e);
                 e.getSplits().add(s);
@@ -158,11 +161,11 @@ public class ExpenseService {
         }
     }
 
-    public Map<String,Object> getAnalytics(LocalDate start, LocalDate end, String email){
+    public List<ExpenseResponseDto> getAnalytics(LocalDate start, LocalDate end, String email){
         
         List<Expense> all = expenseRepository.findByUserInvolvementAndDateBetween(start, end,email);
-        BigDecimal total = BigDecimal.ZERO; 
-        Map<String,BigDecimal> byCategory=new HashMap<>();
+        List<ExpenseResponseDto> result = new ArrayList<>(); 
+        
         for(Expense e:all){
             BigDecimal myShare = BigDecimal.ZERO;
             if(e.getSplits()!=null && !e.getSplits().isEmpty()){
@@ -178,15 +181,12 @@ public class ExpenseService {
                 }
             }
             if(myShare.compareTo(BigDecimal.ZERO)>0){
-                total = total.add(myShare);
-                String cat=e.getCategory()!=null ? e.getCategory().getName():"Uncategorized";
-                byCategory.put(cat,byCategory.getOrDefault(cat, BigDecimal.ZERO).add(myShare));
+                ExpenseResponseDto dto = DtoMapper.toExpenseDto(e);
+                dto.setAmount(myShare);
+                result.add(dto);
             }     
         }
-        Map<String,Object> res=new HashMap<>();
-        res.put("total",total);
-        res.put("byCategory",byCategory);
-        return res;
+        return result;
     }
 
     public List<Expense> getAllExpenses(){

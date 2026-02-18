@@ -11,6 +11,7 @@ import { VerifyComponent } from './components/verify/verify.component'
 import { MainLayoutComponent } from './components/main-layout/main-layout.component';
 import { Oauth2HandlerComponent } from './components/oauth2-handler/oauth2-handler.component';
 import { ResetComponent } from './components/reset/reset.component';
+import { GroupDetailComponent } from './components/group-detail/group-detail.component';
 //import { authGuard } from './services/auth.guard';
 
 export const routes: Routes = [
@@ -27,6 +28,7 @@ export const routes: Routes = [
       { path: '', component: DashboardComponent },
       { path: 'expenses', component: ExpensesComponent },
       { path: 'groups', component: GroupComponent },
+      { path: 'groups/:id', component: GroupDetailComponent},
       { path: 'chat', component: GroupChatComponent },
       { path: 'currency', component: CurrencyConverterComponent },
       { path: 'settings', component: SettingsComponent }
