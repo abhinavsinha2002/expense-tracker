@@ -25,7 +25,7 @@ public class DtoMapper {
 
     public static GroupResponseDto toGroupDto(ExpenseGroup group){
         return new GroupResponseDto(group.getId(), group.getName(), toUserDto(group.getOwner()), 
-        group.getMembers().stream().map(DtoMapper::toUserDto).collect(Collectors.toSet()));
+        group.getMembers().stream().map(DtoMapper::toUserDto).collect(Collectors.toSet()),group.getCurrency());
     }
 
     public static ExpenseResponseDto toExpenseDto(Expense expense){

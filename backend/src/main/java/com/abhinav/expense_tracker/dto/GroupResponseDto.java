@@ -6,13 +6,15 @@ public class GroupResponseDto {
     private Long id;
     private String name;
     private UserDto owner;
+    private String currency;
     private Set<UserDto> members;
 
-    public GroupResponseDto(Long id,String name,UserDto owner, Set<UserDto> members){
+    public GroupResponseDto(Long id,String name,UserDto owner, Set<UserDto> members,String currency){
         this.id=id;
         this.name=name;
         this.owner=owner;
         this.members=members;
+        this.currency = currency;
     }
 
     public Long getId() {
@@ -45,5 +47,13 @@ public class GroupResponseDto {
 
     public void setMembers(Set<UserDto> members) {
         this.members = members;
+    }
+
+    public String getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(String currency) {
+        this.currency = currency;
     }
 }

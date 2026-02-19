@@ -11,7 +11,7 @@
     <div class="profile-section">
       <ng-container *ngIf="auth.isLoggedIn()">
         <div class="avatar-circle">
-          <img [src]="auth.currentUser?.profilePicture || 'assets/default-avatar.jpeg'" alt="User">
+          <img [src]="auth.currentUser?.profilePicture || 'assets/default-avatar.jpg'" alt="User">
         </div>
         <div class="profile-info">
           <h3>{{ auth.currentUser?.fullName || 'User' }}</h3>

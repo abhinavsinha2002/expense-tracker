@@ -71,15 +71,22 @@
 
 <div class="modal-overlay" *ngIf="showCreateModal">
   <div class="modal-card fade-in">
-    <h3>Create a Group</h3>
-    <div class="mb-3">
-      <input type="text" [(ngModel)]="newGroup.name" placeholder="Group Name (e.g. Goa Trip)" class="form-control">
+    
+    <div class="modal-header-row mb-4">
+      <h3>Create a Group</h3>
+      <button class="close-icon-btn" (click)="showCreateModal = false">
+        <mat-icon>close</mat-icon>
+      </button>
     </div>
-    <div class="mb-3">
-      <input type="text" [(ngModel)]="newGroup.description" placeholder="Short Description" class="form-control">
+
+    <div class="mb-4">
+      <input type="text" [(ngModel)]="newGroup.name" placeholder="Group Name (e.g. Goa Trip)" class="form-control form-control-lg">
     </div>
     <div class="mb-4">
-      <select [(ngModel)]="newGroup.currency" class="form-control">
+      <input type="text" [(ngModel)]="newGroup.description" placeholder="Short Description" class="form-control form-control-lg">
+    </div>
+    <div class="mb-5">
+      <select [(ngModel)]="newGroup.currency" class="form-control form-control-lg custom-select">
         <option value="INR">INR (₹)</option>
         <option value="USD">USD ($)</option>
         <option value="EUR">EUR (€)</option>
@@ -87,11 +94,10 @@
     </div>
     
     <div class="d-flex gap-3">
-      <button class="create-btn flex-grow-1" (click)="createGroup()" [disabled]="isLoading">
-        <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-1"></span>
-        Create
+      <button class="create-btn flex-grow-1" (click)="createGroup()" [disabled]="isLoading" style="padding: 14px 24px; font-size: 1.1rem;">
+        <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2"></span>
+        Create Group
       </button>
-      <button class="btn btn-outline-light" (click)="showCreateModal = false" style="border-radius: 50px; padding: 0 24px;">Cancel</button>
     </div>
   </div>
 </div>

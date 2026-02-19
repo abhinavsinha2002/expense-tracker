@@ -40,7 +40,7 @@ public class DataLoader implements CommandLineRunner {
     public void run(String... args) throws Exception {
         // Requires empty DB to run
         if (userRepository.count() == 0) {
-            System.out.println("Loading Dated Test Data...");
+            System.out.println("Loading Dated Test Data with VND Currency...");
             BCryptPasswordEncoder enc = new BCryptPasswordEncoder();
             String pwd = enc.encode("password");
 
@@ -55,9 +55,10 @@ public class DataLoader implements CommandLineRunner {
             Category shopping = createCategory("Shopping");
             Category bills = createCategory("Utilities");
 
-            // 3. Create Groups
-            ExpenseGroup patnaGroup = createGroup("Patna Group", abhinav, new HashSet<>(Arrays.asList(abhinav, anjalee)));
-            ExpenseGroup blrGroup = createGroup("Bangalore Trip", abhinav, new HashSet<>(Arrays.asList(abhinav, ravi)));
+            // 3. Create Groups with VIETNAMESE CURRENCY (VND)
+            // Passing "VND" here to test frontend currency binding
+            ExpenseGroup patnaGroup = createGroup("Patna Group", "VND", abhinav, new HashSet<>(Arrays.asList(abhinav, anjalee)));
+            ExpenseGroup blrGroup = createGroup("Bangalore Trip", "VND", abhinav, new HashSet<>(Arrays.asList(abhinav, ravi)));
 
             // 4. Create Expenses with Specific Dates
 
@@ -100,12 +101,12 @@ public class DataLoader implements CommandLineRunner {
             createPersonal(abhinav, 900, food, 120);
 
             // Patna Group: Shopping (150 days ago)
-            createSplitExpense("Shopping", BigDecimal.valueOf(2500), 150, abhinav, patnaGroup, shopping, 
-                Arrays.asList(new Split(abhinav, 2000), new Split(anjalee, 500)));
+            createSplitExpense("Shopping", BigDecimal.valueOf(5000), 150, abhinav, patnaGroup, shopping, 
+                Arrays.asList(new Split(abhinav, 2000), new Split(anjalee, 3000)));
 
             // Bangalore Group: Tickets (100 days ago)
-            createSplitExpense("Tickets", BigDecimal.valueOf(600), 100, ravi, blrGroup, travel, 
-                Arrays.asList(new Split(abhinav, 300), new Split(ravi, 300)));
+            createSplitExpense("Tickets", BigDecimal.valueOf(3500), 100, ravi, blrGroup, travel, 
+                Arrays.asList(new Split(abhinav, 2000), new Split(ravi, 1500)));
 
 
             // === 4. LAST 1 YEAR (1Y - Includes all above) ===
@@ -132,7 +133,7 @@ public class DataLoader implements CommandLineRunner {
                 Arrays.asList(new Split(abhinav, 300))); // Abhinav paid for self
 
 
-            System.out.println("Dated Test Data Loaded Successfully!");
+            System.out.println("Dated Test Data with VND Loaded Successfully!");
         }
     }
 
@@ -153,9 +154,11 @@ public class DataLoader implements CommandLineRunner {
         return categoryRepository.save(new Category(name));
     }
 
-    private ExpenseGroup createGroup(String name, User owner, Set<User> members) {
+    // UPDATED: Now accepts 'currency' string
+    private ExpenseGroup createGroup(String name, String currency, User owner, Set<User> members) {
         ExpenseGroup g = new ExpenseGroup();
         g.setName(name);
+        g.setCurrency(currency); // Set the currency here
         g.setOwner(owner);
         g.setMembers(members);
         return groupRepository.save(g);
