@@ -6,6 +6,7 @@ export interface Group{
     name:string;
     owner:User;
     currency?:string;
+    inviteToken?:string;
     description?:string;
     members?:User[];
     expenses?:Expense[];

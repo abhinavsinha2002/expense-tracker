@@ -25,6 +25,10 @@ export class GroupService{
     getGroupById(id:number):Observable<Group>{
         return this.http.get<Group>(`${this.base}/${id}`);
     }
+
+    joinGroup(token:string):Observable<any>{
+        return this.http.post(`${this.base}/join/${token}`,{});
+    }
     
 }
 

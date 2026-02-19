@@ -33,6 +33,8 @@ export class GroupComponent implements OnInit {
   groups: Group[] = [];
   showCreateModal = false;
   isLoading = false;
+  isSuccessState = false;
+  createdInviteLink = '';
 
   newGroup = {
     name: '',
@@ -86,8 +88,8 @@ export class GroupComponent implements OnInit {
       next: (createdGroup) => {
         this.showMessage('Group created successfully!');
         this.groups.push(createdGroup);
-        this.showCreateModal = false;
-        this.resetForm();
+        this.createdInviteLink = `{window.location.origin}/main/join/${createdGroup.inviteToken}`;
+        this.isSuccessState = true;
         this.isLoading = false;
       },
       error: (e) => {
@@ -101,6 +103,17 @@ export class GroupComponent implements OnInit {
     this.newGroup = { name: '', description: '', currency: 'INR' };
   }
 
+  closeModal(){
+    this.showCreateModal = false;
+    this.isSuccessState = false;
+    this.resetForm();
+  }
+
+  copyLink(){
+    navigator.clipboard.writeText(this.createdInviteLink).then(() => {
+        this.showMessage('Invite link copied to clipboard!');
+    });
+  }
   // --- UI HELPERS ---
 
   // 3. New Helper to filter out the logged-in user
