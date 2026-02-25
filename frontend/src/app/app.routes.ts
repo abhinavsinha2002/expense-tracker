@@ -12,6 +12,7 @@ import { MainLayoutComponent } from './components/main-layout/main-layout.compon
 import { Oauth2HandlerComponent } from './components/oauth2-handler/oauth2-handler.component';
 import { ResetComponent } from './components/reset/reset.component';
 import { GroupDetailComponent } from './components/group-detail/group-detail.component';
+import { JoinGroupComponent } from './components/join-group/join-group.component';
 //import { authGuard } from './services/auth.guard';
 
 export const routes: Routes = [
@@ -21,6 +22,7 @@ export const routes: Routes = [
   { path: 'oauth2/redirect',component: Oauth2HandlerComponent },
   { path: 'verify',component:VerifyComponent},
   { path: 'reset', component: ResetComponent},
+  { path: 'join/:token',component: JoinGroupComponent},
   {
     path:'main',
     component: MainLayoutComponent,
@@ -31,7 +33,7 @@ export const routes: Routes = [
       { path: 'groups/:id', component: GroupDetailComponent},
       { path: 'chat', component: GroupChatComponent },
       { path: 'currency', component: CurrencyConverterComponent },
-      { path: 'settings', component: SettingsComponent }
+      { path: 'settings', component: SettingsComponent },
     ]
   }
   

@@ -1,0 +1,117 @@
+.join-container {
+  height: 100%;
+  min-height: 80vh; /* Fill the router-outlet space */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+/* Custom Glass Card tailored for forms */
+.glass-card {
+  width: 100%;
+  max-width: 450px;
+  background: var(--bg-card, rgba(255, 255, 255, 0.05));
+  backdrop-filter: blur(15px);
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+  border-radius: 20px;
+  padding: 50px 40px;
+  box-shadow: var(--card-shadow, 0 10px 30px rgba(0, 0, 0, 0.3));
+}
+
+/* Branding */
+.brand-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.brand-icon {
+  font-size: 56px;
+  width: 56px;
+  height: 56px;
+  color: var(--gold-accent, #dcb14a);
+  margin-bottom: 10px;
+}
+
+.brand-text {
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0;
+  letter-spacing: 2px;
+  color: #000000;
+}
+
+.gold-text {
+  color: var(--gold-accent, #dcb14a);
+}
+
+/* Typography */
+.title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #422b2b;
+  margin-bottom: 10px;
+}
+
+/* Error Box */
+.error-box {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #ef4444;
+  padding: 12px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  margin-bottom: 20px;
+}
+
+/* Buttons */
+.btn-premium {
+  background: linear-gradient(135deg, #dcb14a 0%, #f4d03f 100%);
+  color: #000;
+  border: none;
+  padding: 16px 20px;
+  border-radius: 50px;
+  font-weight: 600;
+  font-size: 1.05rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(220, 177, 74, 0.3);
+}
+
+.btn-premium:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(220, 177, 74, 0.5);
+}
+
+.btn-premium:disabled {
+  background: #444;
+  color: #888;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+.btn-outline {
+  background: transparent;
+  border: none;
+  color: var(--text-muted, #aaa);
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: color 0.3s;
+  width: 100%;
+}
+
+.btn-outline:hover:not(:disabled) {
+  color: #f4d03f;
+  text-decoration: underline;
+}
+
+/* Animation */
+.fade-in { animation: fadeIn 0.5s ease-out; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }

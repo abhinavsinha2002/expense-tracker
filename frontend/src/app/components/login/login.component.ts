@@ -131,11 +131,18 @@ export class LoginComponent implements OnInit {
       next: () => {
         this.triggerConfetti();
 
-        // --- 2. DELAY NAVIGATION SLIGHTLY TO SHOW ANIMATION ---
-        setTimeout(() => {
+        const pendingToken = localStorage.getItem('pendingInviteToken');
+        if(pendingToken){
+          localStorage.removeItem('pendingInviteToken');
+          this.router.navigate(['/join',pendingToken]);
+        }
+        else{
+          setTimeout(() => {
           this.router.navigate(['/main/']);
           this.showMessages(`Let's manage some money, ${this.welcomeName}!`);
         }, 1000);
+        }
+        
       },
       error: (err) =>{
         this.showMessages(err.error,true);

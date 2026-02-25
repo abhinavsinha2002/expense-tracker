@@ -69,6 +69,11 @@ export class GroupComponent implements OnInit {
     });
   }
 
+  openModal() {
+    this.showCreateModal = true;
+    document.body.style.overflow = 'hidden'; // Completely locks background scroll
+  }
+
   createGroup() {
     // ... (Keep existing create logic) ...
     if (!this.newGroup.name) {
@@ -88,13 +93,16 @@ export class GroupComponent implements OnInit {
       next: (createdGroup) => {
         this.showMessage('Group created successfully!');
         this.groups.push(createdGroup);
-        this.createdInviteLink = `{window.location.origin}/main/join/${createdGroup.inviteToken}`;
+        this.createdInviteLink = `${window.location.origin}/join/${createdGroup.inviteToken}`;
         this.isSuccessState = true;
         this.isLoading = false;
+
+        this.cdr.detectChanges();
       },
       error: (e) => {
         this.showMessage(e.error?.message || 'Failed to create group', true);
         this.isLoading = false;
+        this.cdr.detectChanges();
       }
     });
   }
@@ -106,6 +114,7 @@ export class GroupComponent implements OnInit {
   closeModal(){
     this.showCreateModal = false;
     this.isSuccessState = false;
+    document.body.style.overflow = 'auto';
     this.resetForm();
   }
 

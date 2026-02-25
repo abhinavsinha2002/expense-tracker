@@ -2,7 +2,7 @@
   
   <div class="header-row">
     <h2 class="title">My Groups</h2>
-    <button class="create-btn" (click)="showCreateModal = true">
+    <button class="create-btn" (click)="openModal()">
       <mat-icon style="vertical-align: middle; font-size: 20px; height: 20px; width: 20px;">add</mat-icon> 
       New Group
     </button>
@@ -73,15 +73,21 @@
   <div class="modal-card fade-in">
     
     <ng-container *ngIf="!isSuccessState">
-      <h3>Create a Group</h3>
-      <div class="mb-3">
-        <input type="text" [(ngModel)]="newGroup.name" placeholder="Group Name (e.g. Goa Trip)" class="form-control">
+      <div class="modal-header-row mb-4">
+        <h3>Create a Group</h3>
+        <button class="close-icon-btn" (click)="closeModal()">
+          <mat-icon>close</mat-icon>
+        </button>
       </div>
-      <div class="mb-3">
-        <input type="text" [(ngModel)]="newGroup.description" placeholder="Short Description" class="form-control">
+
+      <div class="mb-4">
+        <input type="text" [(ngModel)]="newGroup.name" placeholder="Group Name (e.g. Goa Trip)" class="form-control form-control-lg">
       </div>
       <div class="mb-4">
-        <select [(ngModel)]="newGroup.currency" class="form-control">
+        <input type="text" [(ngModel)]="newGroup.description" placeholder="Short Description" class="form-control form-control-lg">
+      </div>
+      <div class="mb-5">
+        <select [(ngModel)]="newGroup.currency" class="form-control form-control-lg custom-select">
           <option value="INR">INR (₹)</option>
           <option value="USD">USD ($)</option>
           <option value="EUR">EUR (€)</option>
@@ -90,17 +96,22 @@
       
       <div class="d-flex gap-3">
         <button class="create-btn flex-grow-1" (click)="createGroup()" [disabled]="isLoading">
-          <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-1"></span>
-          Create
+          <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2"></span>
+          Create Group
         </button>
-        <button class="btn btn-outline-light" (click)="closeModal()" style="border-radius: 50px; padding: 0 24px;">Cancel</button>
       </div>
     </ng-container>
 
     <ng-container *ngIf="isSuccessState">
       <div class="text-center">
+        <div class="d-flex justify-content-end">
+           <button class="close-icon-btn" (click)="closeModal()">
+             <mat-icon>close</mat-icon>
+           </button>
+        </div>
+
         <mat-icon style="font-size: 60px; height: 60px; width: 60px; color: #27ae60;">check_circle</mat-icon>
-        <h3 class="mt-3">Group Created!</h3>
+        <h3 class="mt-3 mb-2" style="color: var(--text-main);">Group Created!</h3>
         <p style="color: var(--text-muted); font-size: 0.9rem;">Share this link with your friends so they can join.</p>
         
         <div class="link-box mt-4 mb-4">
@@ -110,7 +121,7 @@
           </button>
         </div>
 
-        <button class="create-btn w-100" (click)="closeModal()">Done</button>
+        <button class="create-btn" (click)="closeModal()">Done</button>
       </div>
     </ng-container>
 

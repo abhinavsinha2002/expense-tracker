@@ -22,7 +22,15 @@ export class Oauth2HandlerComponent implements OnInit{
         if(token){
             this.authService.saveToken(token).subscribe({
                 next:()=>{
-                    this.router.navigate(['/main']);
+                    const pendingToken = localStorage.getItem('pendingInviteToken');
+                    if(pendingToken){
+                        localStorage.removeItem('pendingInviteToken');
+                        this.router.navigate(['/join',pendingToken]);
+                    }
+                    else{
+                        this.router.navigate(['/main']);
+                    }
+                    
                 },
                 error:()=>{
                     this.router.navigate(['/login'])

@@ -40,9 +40,9 @@ public class GroupController {
     }
 
     @PostMapping("/join/{token}")
-    public ResponseEntity<?> joinGroup(@PathVariable String token, HttpServletRequest req){
-        String username = jwtUtil.extractUsername(token);
-        groupService.joinGroup(token, username);
+    public ResponseEntity<?> joinGroup(@PathVariable String token, Authentication auth){
+        String email = auth.getName();
+        groupService.joinGroup(token, email);
         return ResponseEntity.ok("Joined group successfully");
     }
 

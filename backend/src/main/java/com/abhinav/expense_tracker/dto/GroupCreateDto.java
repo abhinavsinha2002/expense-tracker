@@ -5,6 +5,7 @@ import java.util.Set;
 public class GroupCreateDto {
     private String name;
     private String currency;
+    private String description;
 
     public GroupCreateDto(){}
 
@@ -22,6 +23,14 @@ public class GroupCreateDto {
 
     public void setCurrency(String currency) {
         this.currency = currency;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
 }

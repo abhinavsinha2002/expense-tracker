@@ -18,7 +18,7 @@ import { AuthService } from '../../services/auth.service';
 export class VerifyComponent implements OnInit{
     status: 'loading' | 'success' | 'error' = 'loading';
     message = 'Verifying your account...';
-    countdown = 3;
+    countdown = 5;
     private timer: any;
 
     constructor(
@@ -45,9 +45,7 @@ export class VerifyComponent implements OnInit{
                     this.cdr.detectChanges();
                 },
                 error: (err) => {
-                    const msg = typeof err.error === 'string' 
-                        ? err.error 
-                        : 'Verification link expired or invalid.';
+                    const msg ='Verification link expired or invalid.';
                     this.handleError(msg);
                 }
             });

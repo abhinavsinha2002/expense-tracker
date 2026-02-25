@@ -1,0 +1,43 @@
+<div class="join-container fade-in">
+    <div class="glass-card text-center">
+
+        <div class="brand-header">
+            <mat-icon class="brand-icon">account_balance_wallet</mat-icon>
+            <h2 class="brand-text">HISAB<span class="gold-text">KITAB</span></h2>
+        </div>
+
+        <h3 class="title">You've been invited!</h3>
+
+        <p class="text-muted mb-4" *ngIf="isLoggedIn">
+            Accept the invitation to join this expense group.
+        </p>
+        <p class="text-muted mb-4" *ngIf="!isLoggedIn">
+            You must log in or create an account to accept this invitation.
+        </p>
+
+        <div *ngIf="error" class="error-box fade-in">
+            <mat-icon>error_outline</mat-icon>
+            <span>{{ error }}</span>
+        </div>
+
+        <button class="btn-premium w-100" (click)="handleAction()" [disabled]="isLoading || !token">
+            <span class="spinner-border spinner-border-sm me-2" *ngIf="isLoading"></span>
+            {{ isLoading ? 'Processing...' : (isLoggedIn ? 'Accept Invitation' : 'Log in to Accept') }}
+        </button>
+
+        <div class="mt-4" *ngIf="!isLoggedIn">
+            <p style="font-size: 0.9rem; color: #aaa;">
+                New here?
+                <a href="javascript:void(0)" (click)="goToRegister()"
+                    style="color: #dcb14a; text-decoration: none; font-weight: 600;">
+                    Create an account
+                </a>
+            </p>
+        </div>
+
+        <button class="btn-outline mt-3" (click)="goHome()" [disabled]="isLoading">
+            Return to Home
+        </button>
+
+    </div>
+</div>
